@@ -5,7 +5,6 @@
 # 
 # TODO: Brute Force Instagram Accounts
 #
-#
 import os
 import time
 import socks
@@ -15,7 +14,7 @@ import random
 import datetime
 import cookielib
 import subprocess 
-#
+
 from Core.art import Colors
 from Core.art import Display
 
