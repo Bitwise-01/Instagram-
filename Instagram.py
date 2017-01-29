@@ -5,7 +5,6 @@
 # 
 # TODO: Brute Force Instagram Accounts
 #
-#
 import os
 import ssl
 import time
