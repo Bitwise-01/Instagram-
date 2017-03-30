@@ -3,7 +3,7 @@
 # @Author: ETHICAL H4CK3R
 # Distro:  Kali Linux 2.0
 #
-# TODO: Brute Force Instagram Accounts
+# Brute Force Instagram Accounts
 #
 import os
 import time
