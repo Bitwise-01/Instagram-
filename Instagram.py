@@ -17,6 +17,7 @@ import subprocess
 
 from Core.art import Colors
 from Core.art import Display
+from platform import platform
 
 def SetupMechanize():
   global Br
@@ -119,6 +120,9 @@ def AccessGranted(email,password):
 if __name__ == '__main__':
   if os.getuid():
    exit('{}[{}!{}]{} Root Access Required'.format(Red,Yellow,Red,Blue))
+
+  if not 'kali' in platform():
+   exit('Kali Linux 2.0 required')
 
   Red,Blue,Green,Yellow,White=Colors[0],Colors[1],Colors[2],Colors[3],Colors[4]
 
