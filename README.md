@@ -1,4 +1,4 @@
 # Instagram
-
+<br><br>
 # Usage
-python instagram [Username] [pass.lst] 
+python Instagram.py  [Username]  [pass.lst] 
