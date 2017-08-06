@@ -1,3 +1,5 @@
+
+import random
 import cookielib
 import mechanize
 
@@ -12,7 +14,7 @@ class Browser(object):
   browser.set_handle_referer(True)
   browser.set_handle_robots(False)
   browser.set_cookiejar(cookielib.LWPCookieJar())
-  browser.addheaders=[('User-agent',self.useragent)]
+  browser.addheaders=[('User-agent',self.useragent())]
   browser.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(),max_time=1)
   return browser
 
