@@ -31,7 +31,6 @@ class Browser(object):
    return
 
   try:
-   self.password = password
    self.display(password)
    self.br.open(self.url)
    self.br.select_form(nr=0)
