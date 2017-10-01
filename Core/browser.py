@@ -1,6 +1,11 @@
+import json
 import random
+import requests
 import cookielib
 import mechanize
+
+# obtain ip address
+url = 'https://api.ipify.org/?format=json'
 
 class Browser(object):
  def __init__(self):
@@ -22,9 +27,9 @@ class Browser(object):
 
  def getIp(self):
   try:
-   return self.br.open('http://wtfismyip.com/text').read().replace('\n','')
+   return json.loads(requests.get(url).text)['ip']
   except KeyboardInterrupt:self.kill()
-  except:return
+  except:pass
 
  def login(self,password):
   if any([not self.alive,self.isFound]):
