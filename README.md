@@ -8,4 +8,4 @@ python instagram.py  [Username]  [wordlist]
 
 [requests](https://pypi.python.org/pypi/requests/2.18.4) install with: `pip install requests`
 
-[Tor](www.torproject.org)
+[Tor](https://www.torproject.org/docs/debian) install with: `sudo apt-get install tor`
