@@ -190,6 +190,10 @@ def main():
   if not os.path.exists('/usr/sbin/tor'):
    engine.kill('Please Install Tor'.format(engine.y,engine.r,engine.n))
 
+ # does the account exists?
+ if not engine.exists(engine.username):
+  engine.kill('The Account \'{}\' does not exists'.format(engine.username.title()))
+
  # start attack
  try:
   engine.run()
