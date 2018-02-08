@@ -1,3 +1,5 @@
+### No longer maintained, use [hyrPulse](https://github.com/Ethical-H4CK3R/hyprPulse) instead
+
 # Usage
 python instagram.py  [Username]  [wordlist]
 
