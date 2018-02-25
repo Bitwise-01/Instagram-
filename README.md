@@ -1,4 +1,4 @@
-### No longer maintained, use [hyrPulse](https://github.com/Ethical-H4CK3R/hyprPulse) instead
+### No longer maintained, use [InstaBurst](https://github.com/Ethical-H4CK3R/InstaBurst) instead
 
 # Usage
 python instagram.py  [Username]  [wordlist]
