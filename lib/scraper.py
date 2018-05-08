@@ -29,7 +29,6 @@ class Scraper(object):
   self.new_proxies = 'https://free-proxy-list.net'
   self.socks_proxies = 'https://socks-proxy.net'
   self.ssl_proxies = 'https://sslproxies.org'
-  self.ip_checker = 'https://ip-api.io/json/'
   self.isAlive  = False
   self.protocol = None
   self.country  = None
