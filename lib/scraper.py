@@ -38,6 +38,7 @@ class Scraper(object):
   self.port =  None 
 
  def parse(self, proxy, ssl=False):
+  if not self.isAlive:return 
   detail = {'ip': proxy[0].string, 'port': proxy[1].string,
             'protocol': 'SSL' if ssl else proxy[4].string, 
             'anonymity': proxy[4 if ssl else 5].string, 

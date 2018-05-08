@@ -2,8 +2,9 @@
 # Author: Pure-L0G1C
 # Description: Bruteforce Instagram
 
-from sys import version 
+from time import sleep 
 from os.path import exists
+from sys import exit, version 
 from lib.bruter import Bruter 
 from lib.session import Session 
 from argparse import ArgumentParser
@@ -41,10 +42,19 @@ def main():
  # start attack
  try:
   engine.start()
+ except KeyboardInterrupt:
+  engine.user_abort = True 
  finally:
-  if not engine.isFound:
+  if all([engine.spyder.proxy_info, not engine.isFound]):
    engine.display(engine.pwd)
-   print('\n[!] Exiting ...')
+
+  if all([not engine.read, engine.user_abort, not engine.isFound]):
+   print('{}[!] Exiting ...'.format('' if not engine.spyder.proxy_info else '\n'))
+
+  if all([engine.read, not engine.isFound]):
+   print('\n[*] Password not found')
+
+  sleep(1.5)
   engine.stop()
 
 if __name__ == '__main__':
