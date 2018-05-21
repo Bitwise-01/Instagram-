@@ -2,7 +2,7 @@
 # Author: Pure-L0G1C
 # Description: Gimme proxies
 
-from lib.wrap import Wrapper
+from .lib.wrap import Wrapper
 
 class Atom(object):
 
