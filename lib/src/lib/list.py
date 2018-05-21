@@ -13,7 +13,8 @@ class List(object):
    self.list.append(item)
 
  def remove(self, index):
-  del self.list[index]
+  if all([index >= 0, index < self.lsize]):
+   del self.list[index]
 
  def get(self):
   ''' shrink list size '''
@@ -22,10 +23,12 @@ class List(object):
 
  def get_item(self, index):
   ''' don't shrink list size '''
-  return self.list[index]
+  if all([index >= 0, index < self.lsize]):
+   return self.list[index] 
 
  def get_index(self, item):
-  return self.list.index(item)
+  if item in self.list:
+   return self.list.index(item) 
 
  @property
  def lsize(self):
