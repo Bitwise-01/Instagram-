@@ -2,8 +2,8 @@
 # Author: Pure-L0G1C
 # Description: Bruter
 
-from .queue import Queue 
 from .spyder import Spyder 
+from .scraper import Queue 
 from .session import Session
 from time import time, sleep 
 from threading import Thread, Lock
@@ -40,7 +40,7 @@ class Bruter(object):
 
  def login(self, pwd):
   try:
-   if not self.spyder.proxies.size:
+   if not self.spyder.proxies.qsize:
     return 
 
    with self.lock:
@@ -111,7 +111,7 @@ class Bruter(object):
   try:
    if not isFound:
     print('[-] Proxy-IP: {}\n[-] Wordlist: {}\n[-] Username: {}\n[-] Password: {}\n[-] Attempts: {}\n[-] Proxies: {}'.
-          format(ip, self.wordlist, self.username, pwd, self.attempts, self.spyder.proxies.size))
+          format(ip, self.wordlist, self.username, pwd, self.attempts, self.spyder.proxies.qsize))
     if not n:self.display(pwd, isFound=True)
    else:
     if n:self.display(pwd, n-1)
@@ -123,7 +123,7 @@ class Bruter(object):
    try:
     if any([not self.ip, self.proxy_usage_count >= max_proxy_usage, self.fails >= max_fails]):
      try:
-      if not self.spyder.proxies.size:continue
+      if not self.spyder.proxies.qsize:continue
       self.spyder.renew_proxy()
       ip = self.spyder.ip_addr(self.spyder.br) 
       if not ip:continue
@@ -217,9 +217,9 @@ class Bruter(object):
    try:
     if self.isAlive:
      if self.ip:
-      if any([self.last_attempt != self.attempts, self.last_proxy != self.spyder.proxies.size, self.last_ip != self.ip]):
+      if any([self.last_attempt != self.attempts, self.last_proxy != self.spyder.proxies.qsize, self.last_ip != self.ip]):
        self.display(self.pwd)
-       self.last_proxy = self.spyder.proxies.size
+       self.last_proxy = self.spyder.proxies.qsize
        self.last_attempt = self.attempts
        self.last_ip = self.ip
      else:self.display(self.pwd)

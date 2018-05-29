@@ -2,8 +2,8 @@
 # Author: Pure-L0G1C
 # Description: Browser Manager 
 
-from .src.atom import Atom 
 from requests import Session
+from .scraper import Scraper, Queue 
 from .const import fetch_time, site_details
 
 class Spyder(object):
@@ -12,12 +12,16 @@ class Spyder(object):
   self.proxy = None 
   self.isAlive = True 
   self.proxy_info = None
-  self.proxies = Atom(minSpeed=180)
+  self.proxies = Queue()
+  self.scraper = Scraper()
 
  def proxy_manager(self):
-  self.proxies.start()
-  while self.isAlive:pass 
-  self.proxies.stop()
+  while self.isAlive:
+   while all([self.isAlive, self.proxies.qsize]):pass 
+   if not self.isAlive:break
+   
+   self.proxies = self.scraper.scrape(ssl_proxies=True)    
+   [self.proxies.put(proxy) for proxy in self.scraper.scrape(new_proxies=True).queue if self.isAlive]
 
  @property
  def br(self):
@@ -27,11 +31,11 @@ class Spyder(object):
   return session 
 
  def renew_proxy(self, n=10):
-  _proxy = self.proxies.proxy
+  _proxy = self.proxies.get()
   proxy = { 'https': 'https://{}:{}'.format(_proxy['ip'], _proxy['port']) }
 
   if self.proxy:
-   if all([self.proxy == proxy, self.proxies.size, n]):
+   if all([self.proxy == proxy, self.proxies.qsize, n]):
     self.renew_proxy(n-1)
   self.proxy_info = _proxy
   self.proxy = proxy

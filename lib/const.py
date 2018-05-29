@@ -21,9 +21,5 @@ site_details = {
  'login_url': login_url,
  'username_field': instagram_username_field,
  'password_field': instagram_password_field,
- 'header': {
-             'Content-Type': 'application/x-www-form-urlencoded',
-             'Accept-Language': 'en-US,en;q=0.5', 
-             'Accept': '*/*'
-           }
+ 'header': { 'Referer': 'https://www.instagram.com', 'Connection': 'close' }
  }
