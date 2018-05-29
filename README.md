@@ -11,12 +11,6 @@ __Usage:__ `python instagram.py <username> <wordlist> <threads>`
 - ~~Kali Linux 2.0~~
 - ~~TOR~~
 
-### Install 
-```sh
-$> python -m pip install --upgrade pip
-$> pip install -r requirements.txt
-```
-
 ### Help
 ```
 C:\Users\Mohamed\Desktop\Instagram>python instagram.py -h
