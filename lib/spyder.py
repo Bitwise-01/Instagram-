@@ -32,8 +32,9 @@ class Spyder(object):
 
  def renew_proxy(self, n=10):
   _proxy = self.proxies.get()
-  proxy = { 'https': 'https://{}:{}'.format(_proxy['ip'], _proxy['port']) }
-
+  addr = 'http://{}:{}'.format(_proxy['ip'], _proxy['port'])
+  proxy = { 'http': addr, 'https': addr }
+  
   if self.proxy:
    if all([self.proxy == proxy, self.proxies.qsize, n]):
     self.renew_proxy(n-1)
