@@ -111,7 +111,7 @@ class Bruter(object):
   try:
    if not isFound:
     print('[-] Proxy-IP: {}\n[-] Wordlist: {}\n[-] Username: {}\n[-] Password: {}\n[-] Attempts: {}\n[-] Proxies: {}'.
-          format(ip, self.wordlist, self.username, pwd, self.attempts, self.spyder.proxies.qsize))
+          format(ip, self.wordlist, self.username, ', '.join(self.passlist.queue), self.attempts, self.spyder.proxies.qsize))
     if not n:self.display(pwd, isFound=True)
    else:
     if n:self.display(pwd, n-1)
