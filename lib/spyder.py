@@ -41,7 +41,7 @@ class Spyder(object):
   self.proxy_info = _proxy
   self.proxy = proxy
 
- def ip_addr(self, br):
+ def ip_addr(self):
   try:
    return self.proxy['http'].split(':')[1][2:]
   except:pass 
