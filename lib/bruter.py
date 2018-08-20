@@ -194,7 +194,7 @@ class Bruter(object):
   if self.isAlive:self.stop()
 
  def stop(self):
-  if any([all([self.read, self.isFound]), all([not self.read, self.isFound]), all([self.read, not self.isFound])]):self.session.delete()
+  if any([self.read, self.isFound]):self.session.delete()
   else:self.session.write(self.attempts, self.passlist.queue)
   self.kill()
 
