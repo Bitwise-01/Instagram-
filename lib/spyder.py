@@ -43,5 +43,5 @@ class Spyder(object):
 
  def ip_addr(self, br):
   try:
-   return str(br.get('https://api.ipify.org/?format=text', timeout=fetch_time).text)
+   return self.proxy['http'].split(':')[1][2:]
   except:pass 
