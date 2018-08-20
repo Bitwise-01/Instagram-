@@ -125,7 +125,7 @@ class Bruter(object):
      try:
       if not self.spyder.proxies.qsize:continue
       self.spyder.renew_proxy()
-      ip = self.spyder.ip_addr(self.spyder.br) 
+      ip = self.spyder.ip_addr() 
       if not ip:continue
       self.proxy_usage_count = 0
       self.fails = 0
