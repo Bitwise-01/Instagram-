@@ -152,7 +152,7 @@ class Bruter(object):
     while all([not self.isFound, self.isAlive, self.threads>0, self.passlist.qsize]):
      try:
       # bypass slow, authentication required, and hanging proxies
-      if int(time() - started) >= 15:
+      if int(time() - started) >= 5:
        self.fails = max_fails
        self.threads = 0
      except:pass
