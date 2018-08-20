@@ -3,8 +3,8 @@
 # Description: Browser Manager 
 
 from requests import Session
+from .const import site_details
 from .scraper import Scraper, Queue 
-from .const import fetch_time, site_details
 
 class Spyder(object):
 
