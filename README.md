@@ -22,7 +22,7 @@ optional arguments:
   -m MODE, --mode MODE  modes; 0: 128bots, 1: 64bots, 2: 32bots, 3: 16bot
 ```
 
-### Bots(Multi-threads)
+### Bots(Threads)
 - 1 bot: 16 passwords at a time
 - 2 bots: 32 passwords at a time
 - 4 bots: 64 passwords at a time
