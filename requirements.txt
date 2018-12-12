@@ -1,2 +1,2 @@
-requests
 bs4
+requests
