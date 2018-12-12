@@ -53,8 +53,8 @@ C:\Users\Mohamed\Desktop\Instagram>python instagram.py Sami09.1 pass.lst -m 1
 ```
 
 ### Savage mode
-This mode uses 8 bots, or 128 passwords at a time.
-Only use this mode when you have to, proxies are limited so save some p __******__ for the rest of us
+This mode uses 8 bots, or 128 passwords at a time.<br>
+Only use this mode when you have to, proxies are limited so save some p __****__ for the rest of us
 ```
 C:\Users\Mohamed\Desktop\Instagram>python instagram.py Sami09.1 pass.lst -m 0
 ```
