@@ -19,7 +19,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -m MODE, --mode MODE  modes; 0: 128bots, 1: 64bots, 2: 32bots, 3: 16bot
+  -m MODE, --mode MODE  modes; 0: 8bots, 1: 4bots, 2: 2bots, 3: 1bot
 ```
 
 ### Bots(Threads)
