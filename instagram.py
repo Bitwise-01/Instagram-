@@ -30,7 +30,7 @@ def args():
     args = ArgumentParser()
     args.add_argument('username', help='email or username')
     args.add_argument('wordlist', help='password list')
-    args.add_argument('-m', '--mode', default=2, type=valid_int, help='modes; 0: 128bots, 1: 64bots, 2: 32bots, 3: 16bots')
+    args.add_argument('-m', '--mode', default=2, type=valid_int, help='modes; 0: 8bots, 1: 4bots, 2: 2bots, 3: 1bot')
     return args.parse_args()
 
 
