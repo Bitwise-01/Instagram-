@@ -213,7 +213,7 @@ class Bruter(object):
                     break
 
                 if self.retrieve:
-                    if attempts <= (self.attempts + self.passlist.qsize):
+                    if attempts < (self.attempts + self.passlist.qsize):
                         attempts += 1
                         continue
                     else:
