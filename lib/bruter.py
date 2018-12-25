@@ -14,7 +14,6 @@ from .const import max_fails, fetch_time, site_details, credentials
 
 class Bruter(object):
 
-
     def __init__(self, username, threads, wordlist):
         self.max_threads = threads if all([threads <= 128, threads > 0]) else 128 
         self.cls = 'cls' if platform() == 'Windows' else 'clear'
@@ -40,7 +39,6 @@ class Bruter(object):
         self.last_attempt = None
         self.last_proxy = None 
         self.last_ip = None 
-
 
     def login(self, pwd):
         try:
@@ -96,7 +94,6 @@ class Bruter(object):
                 with self.lock:
                     self.threads -= 1 
 
-
     def pwd_found(self, pwd):
         if self.isFound:
             return 
@@ -105,11 +102,9 @@ class Bruter(object):
         del self.passlist.queue[:]
         self.display(pwd, True)
 
-
     def kill(self):
         self.isAlive = False
-        self.spyder.isAlive = False 
-
+        self.spyder.isAlive = False
 
     def display(self, pwd, isFound=False, n=1):
         if not isFound:
@@ -135,7 +130,6 @@ class Bruter(object):
                 print('\n[!] Password Found\n[+] Username: {}\n[+] Password: {}'.format(self.username, pwd))
         except:
             pass 
-
 
     def attack(self):
         while all([not self.isFound, self.isAlive]):
@@ -204,7 +198,6 @@ class Bruter(object):
             except:
                 pass 
 
-
     def pwd_manager(self):
         attempts = 0
         with open(self.wordlist, 'rt') as wordlist:
@@ -240,15 +233,13 @@ class Bruter(object):
         if self.isAlive:
             self.stop()
 
-
     def stop(self):
         if any([self.read, self.isFound]):
             self.session.delete()
         else:
             self.session.write(self.attempts, self.passlist.queue)
 
-        self.kill()       
-
+        self.kill()  
 
     def primary_threads(self):
         proxy_manager = Thread(target=self.spyder.proxy_manager)
@@ -262,7 +253,6 @@ class Bruter(object):
         attack = Thread(target=self.attack)
         attack.daemon = True
         attack.start()
-
 
     def start(self):
         self.primary_threads()
@@ -289,5 +279,5 @@ class Bruter(object):
             except KeyboardInterrupt:
                 self.user_abort = True
                 self.stop()   
-            except Exception as e:
-                print('Error:', e)
+            except:
+                pass 

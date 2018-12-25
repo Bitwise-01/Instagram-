@@ -9,7 +9,6 @@ from bs4 import BeautifulSoup as bs
 
 class Scraper(object):
 
-
     def __init__(self):
         self.anony_proxis = 'https://free-proxy-list.net/anonymous-proxy.html'
         self.new_proxies = 'https://free-proxy-list.net'
@@ -21,8 +20,7 @@ class Scraper(object):
         self.proxies  = None
         self.maxSize  = None
         self.port =  None 
-
-
+       
     def parse(self, proxy, ssl=False):
         if not self.isAlive:
             return 
@@ -63,7 +61,6 @@ class Scraper(object):
         else:
             return detail
 
-
     def fetch(self, url, ssl=False):
         try:
             proxies = bs(get(url).text, 'html.parser').find('tbody').findAll('tr')
@@ -86,7 +83,6 @@ class Scraper(object):
                         break
                 else:
                     self.proxies.put(data)
-
 
     def scrape(self, size=None, port=None, protocol=None, country=None, 
         new_proxies=False, anony_proxies=False, socks_proxies=False, ssl_proxies=False):

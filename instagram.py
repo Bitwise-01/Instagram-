@@ -13,7 +13,6 @@ from argparse import ArgumentParser, ArgumentTypeError
 def _input(msg):
  return raw_input(msg).lower() if int(version.split()[0].split('.')[0]) == 2 else input(msg).lower()
 
-
 def valid_int(n):
     if not n.isdigit():
         raise ArgumentTypeError('mode must be a number')
@@ -25,14 +24,12 @@ def valid_int(n):
         raise ArgumentTypeError('minimum for a mode is 0')
     return n
 
-
 def args():
     args = ArgumentParser()
     args.add_argument('username', help='email or username')
     args.add_argument('wordlist', help='password list')
     args.add_argument('-m', '--mode', default=2, type=valid_int, help='modes; 0: 8bots, 1: 4bots, 2: 2bots, 3: 1bot')
     return args.parse_args()
-
 
 def main():
     arugments = args()
@@ -77,7 +74,6 @@ def main():
             pass 
             
         engine.stop()
-
 
 if __name__ == '__main__':
     main()
