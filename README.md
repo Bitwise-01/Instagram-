@@ -8,6 +8,11 @@ __Usage:__ `python instagram.py <username> <wordlist> -m <mode>`
 - ~~Kali Linux 2.0~~
 - ~~TOR~~
 
+### Install Dependencies
+```
+pip install bs4 requests colorama
+```
+
 ### Help
 ```
 C:\Users\Mohamed\Desktop\Instagram>python instagram.py -h

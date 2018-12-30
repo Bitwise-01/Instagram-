@@ -2,7 +2,6 @@
 # Author: Mohamed
 # Description: Instagram bruter
 
-from time import sleep 
 from os.path import exists
 from lib.bruter import Bruter
 from lib.session import Session 
