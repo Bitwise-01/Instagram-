@@ -1,24 +1,38 @@
-# Date: 05/05/2018
-# Author: Pure-L0G1C
-# Description: Consts
+# Date: 12/28/2018
+# Author: Mohamed
+# Description: Constants
 
-credentials = 'accounts.txt'
+# Browser
+header = {
+    'connection': 'close',
+    'accept-language': 'en-US,en;q=0.9',
+    'accept-encoding': 'gzip, deflate, br',
+    'referer': 'https://www.instagram.com/',
+    'content-type': 'application/x-www-form-urlencoded'
+}
 
-# limits 
-max_fails = 8
-fetch_time = (5, 10)
-
-# Instagram's details
-instagram_username_field = 'username'
-instagram_password_field = 'password'
+username_field = 'username'
+password_field = 'password'
 home_url = 'https://www.instagram.com/'
 login_url = 'https://www.instagram.com/accounts/login/ajax/'
 
-site_details = {
-	'name':'Instagram',
+browser_data = {
+	'header': header,
 	'home_url': home_url, 
 	'login_url': login_url,
-	'username_field': instagram_username_field,
-	'password_field': instagram_password_field,
-	'header': { 'Referer': 'https://www.instagram.com', 'Connection': 'close' }
+	'username_field': username_field,
+	'password_field': password_field
 }
+
+# Login
+fetch_time = (5, 10)
+response_codes = { 'succeed': 0, 'failed': 1, 'locked': -1 }
+
+# Limits
+max_bad_proxies = 256
+max_time_to_wait = 10
+max_bots_per_proxy = 16
+
+# Misc
+credentials = 'accounts.txt'
+modes = { 0: 256, 1: 128, 2: 64, 3: 32 } 

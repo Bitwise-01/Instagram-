@@ -1,117 +1,91 @@
-# Date: 05/03/2018
-# Author: Pure-L0G1C
-# Description: Proxy scraper
+# Date: 12/28/2018
+# Author: Mohamed
+# Description: Proxy scraper 
 
-from requests import get
-from .queue import Queue 
+from time import sleep
+from requests import get 
+from .proxy import Proxy 
+from .proxy_list import ProxyList
 from bs4 import BeautifulSoup as bs 
+from threading import Thread, RLock
 
 
 class Scraper(object):
 
     def __init__(self):
-        self.anony_proxis = 'https://free-proxy-list.net/anonymous-proxy.html'
-        self.new_proxies = 'https://free-proxy-list.net'
-        self.socks_proxies = 'https://socks-proxy.net'
-        self.ssl_proxies = 'https://sslproxies.org'
-        self.isAlive  = False
-        self.protocol = None
-        self.country  = None
-        self.proxies  = None
-        self.maxSize  = None
-        self.port =  None 
-       
-    def parse(self, proxy, ssl=False):
-        if not self.isAlive:
-            return 
+        self.lock = RLock()
+        self.is_alive = True  
+        self.scraped_proxies = []
+        self.extra_proxies_link = 'http://spys.me/proxy.txt'
 
-        detail = { 
-                   'ip': proxy[0].string,
-                   'port': proxy[1].string,
-                   'https': proxy[6].string,
-                   'country': proxy[3].string,
-                   'updated': proxy[7].string,
-                   'anonymity': proxy[4 if ssl else 5].string, 
-                   'protocol': 'SSL' if ssl else proxy[4].string, 
-                 }
+        self.links = [
+            'https://sslproxies.org', 
+            'https://free-proxy-list.net',
+            'https://free-proxy-list.net/anonymous-proxy.html'
+        ]
 
-        if all([self.protocol, self.country, self.port]):
-            if all([detail['protocol'].lower() == self.protocol.lower(),
-                detail['country'].lower() == self.country.lower(), 
-                detail['port'] == self.port]):
-                return detail
-        elif all([self.protocol, self.country]):
-            if all([detail['protocol'].lower() == self.protocol.lower(), 
-                detail['country'].lower() == self.country.lower()]):
-                return detail
-        elif all([self.protocol, self.port]):
-            if all([detail['protocol'].lower() == self.protocol.lower(), 
-                detail['port'] == self.port]):
-                return detail
-        elif all([self.country, self.port]):
-            if all([detail['country'].lower() == self.country.lower(), 
-                detail['port'].lower() == self.port]):
-                return detail
-        elif self.protocol:
-            return None if detail['protocol'].lower() != self.protocol.lower() else detail
-        elif self.country:
-            return None if detail['country'].lower() != self.country.lower() else detail
-        elif self.port:
-            return None if detail['port'] != self.port else detail
-        else:
-            return detail
+    def parse_extra_proxy(self, proxy):
+        proxy = proxy.split(' ')
+        addr = proxy[0].split(':')
 
-    def fetch(self, url, ssl=False):
-        try:
-            proxies = bs(get(url).text, 'html.parser').find('tbody').findAll('tr')
+        return {
+            'ip': addr[0],
+            'port': addr[1],
+            'country': proxy[1].split('-')[0]
+        }        
+
+    def parse_proxy(self, proxy):
+        proxy = proxy.find_all('td')
+        if proxy[4].string != 'transparent' and proxy[5].string != 'transparent':
+            return { 
+                'ip': proxy[0].string,
+                'port': proxy[1].string,
+                'country': proxy[3].string,
+            }
+
+    def scrape_proxies(self, link):
+        try: 
+            if self.is_alive:
+                scraped_proxies = bs(get(link).text, 'html.parser').find('tbody').find_all('tr')
+
+                for proxy in scraped_proxies:
+                    with self.lock:
+                        _proxy = self.parse_proxy(proxy)
+                        if _proxy:
+                            self.scraped_proxies.append(_proxy)
         except KeyboardInterrupt:
-            self.isAlive = False
-            return
-        except:
-            return
- 
-        for proxy in proxies:
-            if not self.isAlive:
-                break
+            self.is_alive = False   
+    
+    def scrape_extra_proxies(self):
+        try:
+            for proxy in get(self.extra_proxies_link).text.split('\n'):
+                if '-H' in proxy and '-S' in proxy:
+                    with self.lock:
+                        self.scraped_proxies.append(self.parse_extra_proxy(proxy))                    
+        except KeyboardInterrupt:
+            self.is_alive = False   
+    
+    @property
+    def proxies(self):
+        proxy_list = ProxyList()
 
-            data = self.parse(proxy.findAll('td'), ssl)
-            if data:
-                if self.maxSize:
-                    if self.proxies.qsize < self.maxSize:
-                        self.proxies.put(data)
-                    else:
-                        break
-                else:
-                    self.proxies.put(data)
+        threads = []
+        threads = [Thread(target=self.scrape_proxies, args=[link]) for link in self.links]
+        threads.append(Thread(target=self.scrape_extra_proxies))
+        
+        for thread in threads:
+            thread.daemon = True 
+            thread.start()
+        
+        while self.is_alive and len(threads):
+            for thread in [thread for thread in threads if not thread.is_alive()]:
+                threads.pop(threads.index(thread))
+            sleep(0.5)            
+            
+        if self.is_alive:
+            for proxy in self.scraped_proxies:
 
-    def scrape(self, size=None, port=None, protocol=None, country=None, 
-        new_proxies=False, anony_proxies=False, socks_proxies=False, ssl_proxies=False):
-        self.port = str(port) if port else None 
-        self.protocol = protocol
-        self.country  = country
-        self.proxies  = Queue()
-        self.maxSize  = None
-        self.isAlive  = True
-        self.isAlive = True
-        self.maxSize = size
+                if not proxy in proxy_list:
+                    proxy_list.append(Proxy(proxy))
 
-        if protocol:
-            if all([protocol.lower() != 'ssl', protocol.lower() != 'socks4', protocol.lower() != 'socks5']):
-                print('Only Supporting SSL & Socks protocol')
-                return 
-
-        if all([self.isAlive, new_proxies]):
-            self.fetch(self.new_proxies)
-
-        if all([self.isAlive, anony_proxies]):
-            self.fetch(self.anony_proxis)
-
-        if all([self.isAlive, socks_proxies]):
-            self.fetch(self.socks_proxies)
-
-        if all([self.isAlive, ssl_proxies]):
-            self.fetch(self.ssl_proxies, True)
-
-        proxies = self.proxies
-        self.proxies = Queue()
-        return proxies
+        return proxy_list.list  

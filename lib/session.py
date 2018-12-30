@@ -25,11 +25,11 @@ class Session(object):
     def write(self, attempts, queue):
         if not attempts:return
         with open(self.file, 'w') as csvfile:
-            fieldnames = ['attempts', 'queue']
+            fieldnames = ['attempts', 'list']
             writer = DictWriter(csvfile, fieldnames=fieldnames)
 
             writer.writeheader()
-            writer.writerow({ 'attempts': attempts, 'queue': queue })
+            writer.writerow({ 'attempts': attempts, 'list': queue })
 
     def delete(self):
         if self.exists:

