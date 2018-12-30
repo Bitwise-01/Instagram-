@@ -35,7 +35,7 @@ optional arguments:
 - 3: 2 bots
 
 ### Chill mode
-This mode uses only 2 bot, or 32 passwords at a time.
+This mode uses only 2 bots, or 32 passwords at a time.
 ```
 C:\Users\Mohamed\Desktop\Instagram>python instagram.py Sami09.1 pass.lst -m 3
 ```
