@@ -103,10 +103,3 @@ class Display(object):
         return input('{0}[{1}?{0}] {2}{3}{4}'.format(
             Fore.YELLOW, Fore.CYAN, Fore.WHITE, data, Fore.RESET
         ))
-
-
-
-
-
-
-    

@@ -1,4 +1,4 @@
-# Instagram Bruter *v2.0*
+# Instagram Bruter *v2.1*
 
 Re-engineered to work **without** TOR<br>
 __Usage:__ `python instagram.py <username> <wordlist> -m <mode>`
