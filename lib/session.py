@@ -1,5 +1,5 @@
 # Date: 05/05/2018
-# Author: Pure-L0G1C
+# Author: Mohamed
 # Description: Session Handler
 
 from os import remove
