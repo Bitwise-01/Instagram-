@@ -1,6 +1,6 @@
 # Date: 12/29/2018
 # Author: Mohamed
-# Description: Instgram bruter
+# Description: Instagram bruter
 
 from time import sleep 
 from os.path import exists
