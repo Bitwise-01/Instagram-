@@ -34,5 +34,6 @@ max_time_to_wait = 10
 max_bots_per_proxy = 16
 
 # Misc
+debug = False 
 credentials = 'accounts.txt'
 modes = { 0: 256, 1: 128, 2: 64, 3: 32 } 

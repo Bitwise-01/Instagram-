@@ -4,6 +4,7 @@
 
 from os import system
 from time import sleep 
+from .const import debug
 from colorama import Fore 
 from builtins import input
 from platform import system as platform 
@@ -16,13 +17,17 @@ class Display(object):
         self.username = username
         self.passlist = passlist
         self.cls = 'cls' if platform() == 'Windows' else 'clear'
-    
+        
     def clear(self):
         system(self.cls)
 
     def stats(self, password, attempts, browsers, load=True):
-        self.clear()       
 
+        if debug: 
+            print('\n\n')
+        else:
+            self.clear()  
+            
         print('{0}[{1}-{0}] {1}Wordlist: {2}{3}{4}'.format(
             Fore.YELLOW, Fore.WHITE, Fore.CYAN, self.passlist, Fore.RESET
         ))

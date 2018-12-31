@@ -4,7 +4,7 @@
 
 from time import time 
 from requests import Session
-from .const import browser_data, response_codes, fetch_time
+from .const import browser_data, response_codes, fetch_time, debug
 
 
 class Browser(object):
@@ -57,12 +57,18 @@ class Browser(object):
 
             if response['status'] == 'fail':
                 return response_codes['locked']
+        
+        if 'errors' in response:
+            return response_codes['locked']
                             
         return response_codes['failed'] 
             
     def authenicate(self):
         response = self.post_data()
         resp = { 'attempted': False, 'accessed': False, 'locked': False }
+
+        if debug:
+            print('pass: {} => {}'.format(self.password, response))
 
         if response:
             resp['attempted'] = True 

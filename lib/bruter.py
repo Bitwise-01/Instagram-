@@ -59,7 +59,7 @@ class Bruter(object):
                     
                     password = browser.password
 
-                    if browser.is_attempted:
+                    if browser.is_attempted and not browser.is_locked:
                         
                         if browser.is_found and not self.is_found:
                             self.password = password
@@ -68,11 +68,9 @@ class Bruter(object):
                         with self.lock:
                             self.password_manager.list_remove(password) 
                     else:
+                        self.proxy = None                  
                         with self.lock:
                             self.proxy_manager.bad_proxy(browser.proxy)
-
-                    if browser.is_locked and not self.is_found:
-                        self.proxy = None                  
 
                     with self.lock:
                         self.browsers.pop(self.browsers.index(browser))
@@ -87,6 +85,7 @@ class Bruter(object):
 
     def attack(self):
         proxy = None  
+        is_attack_started = False 
         while self.is_alive:
 
             browsers = []
@@ -110,6 +109,10 @@ class Bruter(object):
                     browser = Browser(self.username, password, proxy)
                     browsers.append(browser)
                     self.bots_per_proxy += 1
+
+                    if not is_attack_started:
+                        self.display.info('Starting attack ...')
+                        is_attack_started = True  
 
                     with self.lock:
                         self.browsers.append(browser)
@@ -146,19 +149,14 @@ class Bruter(object):
         self.display.info('Initiating daemon threads ...')
         self.start_daemon_threads()
 
-        last_attempt = 0 
-        is_attack_started = False 
+        last_attempt = 0  
         while self.is_alive and not self.is_found:
 
             if last_attempt == self.password_manager.attempts and self.password_manager.attempts:
                 sleep(1.5)
                 continue 
     
-            for browser in self.browsers:
-
-                if not is_attack_started:
-                    self.display.info('Starting attack ...')
-                    is_attack_started = True                    
+            for browser in self.browsers:                   
                 
                 self.display.stats(browser.password, self.password_manager.attempts, len(self.browsers))
                 last_attempt = self.password_manager.attempts
