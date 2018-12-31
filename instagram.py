@@ -64,16 +64,16 @@ class Engine(object):
             try:
                 self.bruter.start()
             except KeyboardInterrupt:
+                self.bruter.stop()
                 self.bruter.display.shutdown(self.bruter.last_password, 
                                             self.bruter.password_manager.attempts, len(self.bruter.browsers))
             finally:
-                self.bruter.stop()
-            
-            self.stop()
+                self.stop()
     
     def stop(self):
         if self.is_alive:
 
+            self.bruter.stop()
             self.is_alive = False 
 
             if self.bruter.password_manager.is_read and not self.bruter.is_found and not self.bruter.password_manager.list_size:

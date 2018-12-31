@@ -96,8 +96,8 @@ class Display(object):
     def warning(self, msg):
         self.clear()
 
-        print('{0}[{1}!{0}] {2}{3}{4}'.format(
-            Fore.YELLOW, Fore.RED, Fore.WHITE, msg, Fore.RESET
+        print('{0}[{1}!{0}] {1}{2}{3}'.format(
+            Fore.YELLOW, Fore.RED, msg, Fore.RESET
         ))
 
         sleep(self.delay)

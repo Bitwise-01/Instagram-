@@ -5,6 +5,7 @@
 from time import sleep
 from requests import get 
 from .proxy import Proxy 
+from .display import Display
 from .proxy_list import ProxyList
 from bs4 import BeautifulSoup as bs 
 from threading import Thread, RLock
@@ -15,6 +16,7 @@ class Scraper(object):
     def __init__(self):
         self.lock = RLock()
         self.is_alive = True  
+        self.display = Display()
         self.scraped_proxies = []
         self.extra_proxies_link = 'http://spys.me/proxy.txt'
 
@@ -44,27 +46,43 @@ class Scraper(object):
             }
 
     def scrape_proxies(self, link):
-        try: 
-            if self.is_alive:
-                scraped_proxies = bs(get(link).text, 'html.parser').find('tbody').find_all('tr')
+        proxies = [] 
 
-                for proxy in scraped_proxies:
-                    with self.lock:
-                        _proxy = self.parse_proxy(proxy)
-                        if _proxy:
-                            self.scraped_proxies.append(_proxy)
-        except KeyboardInterrupt:
-            self.is_alive = False   
-    
-    def scrape_extra_proxies(self):
         try:
-            for proxy in get(self.extra_proxies_link).text.split('\n'):
-                if '-H' in proxy and '-S' in proxy:
-                    with self.lock:
-                        self.scraped_proxies.append(self.parse_extra_proxy(proxy))                    
-        except KeyboardInterrupt:
-            self.is_alive = False   
-    
+            proxies = bs(get(link).text, 'html.parser').find('tbody').find_all('tr')
+        except:
+            pass 
+        
+        if not proxies:
+            with self.lock:
+                if self.is_alive:
+                    self.display.warning('Failed to grab proxies, check your connection')
+        
+        for proxy in proxies:
+            with self.lock:
+                _proxy = self.parse_proxy(proxy)
+                if _proxy:
+                    self.scraped_proxies.append(_proxy)
+            
+    def scrape_extra_proxies(self):
+        proxies = [] 
+
+        try:
+            if self.is_alive:
+                proxies = get(self.extra_proxies_link).text.split('\n')
+        except:
+            pass 
+        
+        if not proxies:
+            with self.lock:
+                if self.is_alive:
+                    self.display.warning('Failed to grab proxies, check your connection')
+        
+        for proxy in proxies:
+            if '-H' in proxy and '-S' in proxy:
+                with self.lock:
+                    self.scraped_proxies.append(self.parse_extra_proxy(proxy))                    
+            
     @property
     def proxies(self):
         proxy_list = ProxyList()
