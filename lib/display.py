@@ -16,18 +16,21 @@ class Display(object):
         self.delay = 1.3
         self.username = username
         self.passlist = passlist
+        self.colors_disabled = True 
         self.cls = 'cls' if platform() == 'Windows' else 'clear'
         
     def clear(self):
-        system(self.cls)
+        if not debug or self.colors_disabled:
+            system(self.cls)
 
-    def stats(self, password, attempts, browsers, load=True):
-
-        if debug: 
-            print('\n\n')
+            if self.colors_disabled:
+                self.colors_disabled = False 
         else:
-            self.clear()  
-            
+            print('\n\n')           
+
+    def stats(self, password, attempts, browsers, load=True):  
+        self.clear()
+
         print('{0}[{1}-{0}] {1}Wordlist: {2}{3}{4}'.format(
             Fore.YELLOW, Fore.WHITE, Fore.CYAN, self.passlist, Fore.RESET
         ))
