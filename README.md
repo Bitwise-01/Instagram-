@@ -1,6 +1,8 @@
 # Instagram Bruter *v2.1*
 
-Re-engineered to work **without** TOR<br>
+<a href="https://discord.gg/SMUaWmn"><img src="https://img.shields.io/badge/Discord-Server-blue.svg" /></a>
+
+Re-engineered to work **without** TOR<br><br>
 __Usage:__ `python instagram.py <username> <wordlist> -m <mode>`
 
 ### Requirements
