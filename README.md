@@ -12,7 +12,7 @@ __Usage:__ `python instagram.py <username> <wordlist> -m <mode>`
 
 ### Install Dependencies
 ```
-pip install bs4 future requests colorama
+python install.py
 ```
 
 ### Help
