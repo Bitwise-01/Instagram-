@@ -43,6 +43,7 @@ class Install:
         except:
             print('[!] Failed to install {}'.format(name))
         finally:
+            print('\n')
             self.is_installing = False 
     
     def install_all(self):
