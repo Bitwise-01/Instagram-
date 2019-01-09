@@ -12,14 +12,14 @@ from argparse import ArgumentParser, ArgumentTypeError
 
 class Engine(object):
 
-    def __init__(self, username, threads, passlist_path):  
+    def __init__(self, username, threads, passlist_path, is_color):  
         self.bruter = None 
         self.resume = False 
         self.is_alive = True 
         self.threads = threads
-        self.display = Display()
         self.username = username
         self.passlist_path = passlist_path
+        self.display = Display(is_color=is_color)
         self.session = Session(username, passlist_path)
     
     def passlist_path_exists(self):
@@ -104,6 +104,7 @@ def args():
     args = ArgumentParser()
     args.add_argument('username', help='email or username')
     args.add_argument('passlist', help='password list')
+    args.add_argument('-nc', '--no-color', dest='color', action='store_true', help='disable colors')
     args.add_argument('-m', '--mode', default=2, type=valid_int, help='modes: 0 => 16 bots; 1 => 8 bots; 2 => 4 bots; 3 => 2 bots')
     return args.parse_args()
 
@@ -113,4 +114,5 @@ if __name__ == '__main__':
     mode = arugments.mode 
     username = arugments.username
     passlist = arugments.passlist
-    Engine(username, modes[mode], passlist).start()
+    is_color = True if not arugments.color else False 
+    Engine(username, modes[mode], passlist, is_color).start()
