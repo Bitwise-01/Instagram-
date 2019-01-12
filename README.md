@@ -10,9 +10,6 @@ It's not easy maintaining this code, a donation of any size would be helpful<br>
 
 [![Donate](https://img.shields.io/badge/Paypal-Donate-orange.svg)]( https://www.paypal.me/Msheikh03)
 
-
-__Usage:__ ```python instagram.py <username> <wordlist> -m <mode>```
-
 ### Requirements
 - Python *v2.x* **|** *v3.x*
 - ~~Kali Linux 2.0~~
@@ -35,6 +32,11 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -m MODE, --mode MODE  modes: 0 => 16 bots; 1 => 8 bots; 2 => 4 bots; 3 => 2 bots
+```
+
+### Usage
+```
+python instagram.py <username> <wordlist> -m <mode>
 ```
 
 ### Bots(Threads)
