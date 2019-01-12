@@ -6,7 +6,7 @@
 <br>
 
 ### Support
-It's not easy maintaining this code, a donation of any size would be helpful<br>
+**It's not easy maintaining this code, a donation of any size would be helpful**<br>
 
 [![Donate](https://img.shields.io/badge/Paypal-Donate-orange.svg)]( https://www.paypal.me/Msheikh03)
 
