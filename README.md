@@ -1,6 +1,13 @@
-# Instagram Bruter *v2.1*
+# Instagram Bruter
 
-<a href="https://discord.gg/SMUaWmn"><img src="https://img.shields.io/badge/Discord-Server-blue.svg" /></a>
+[![Version](https://img.shields.io/badge/Version-v2.1.0-blue.svg)]()
+[![Python](https://img.shields.io/badge/Python-v2.7--3-blue.svg)]()
+[![Discord](https://img.shields.io/badge/Chat-Server-brightgreen.svg)](https://discord.gg/SMUaWmn)
+<br>
+
+### Support
+It's not easy maintaining this code, a donation of any size would be helpful<br><br>
+[![Donate](https://img.shields.io/badge/Paypal-Donate-orange.svg)]( https://www.paypal.me/Msheikh03)
 
 Re-engineered to work **without** TOR<br><br>
 __Usage:__ `python instagram.py <username> <wordlist> -m <mode>`
