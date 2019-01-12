@@ -9,7 +9,7 @@
 It's not easy maintaining this code, a donation of any size would be helpful<br><br>
 [![Donate](https://img.shields.io/badge/Paypal-Donate-orange.svg)]( https://www.paypal.me/Msheikh03)
 
-Re-engineered to work **without** TOR<br><br>
+<br><br>
 __Usage:__ `python instagram.py <username> <wordlist> -m <mode>`
 
 ### Requirements
