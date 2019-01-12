@@ -11,7 +11,7 @@ This program will brute force any Instagram account you send it its way. Just gi
 ### Support
 **It's not easy maintaining this code, a donation of any size will be appreciated**<br>
 
-[![Donate](https://img.shields.io/badge/Paypal-Donate-orange.svg)]( https://www.paypal.me/Msheikh03)
+[![Donate](https://img.shields.io/badge/PayPal-Donate-orange.svg)]( https://www.paypal.me/Msheikh03)
 
 ### Requirements
 - Python *v2.7.x* **|** *v3.x.x*
