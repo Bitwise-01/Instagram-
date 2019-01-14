@@ -1,10 +1,20 @@
-# Instagram Bruter *v2.1*
+# Instagram Bruter
 
-Re-engineered to work **without** TOR<br>
-__Usage:__ `python instagram.py <username> <wordlist> -m <mode>`
+[![Version](https://img.shields.io/badge/Version-v2.1.0-blue.svg)]()
+[![Python](https://img.shields.io/badge/Python-v2.7--3-blue.svg)]()
+[![Discord](https://img.shields.io/badge/Chat-Server-brightgreen.svg)](https://discord.gg/SMUaWmn)
+<br>
+
+This program will brute force any Instagram account you send it its way. Just give it a target, a password list and a mode then press enter and forget about it. No need to worry about anonymity when using this program, its highest priority is your anonymity, it only attacks when your identity is hidden. 
+
+
+### Support
+**It's not easy maintaining this code, a donation of any size will be appreciated**<br>
+
+[![Donate](https://img.shields.io/badge/PayPal-Donate-orange.svg)]( https://www.paypal.me/Msheikh03)
 
 ### Requirements
-- Python *v2.x* **|** *v3.x*
+- Python *v2.7.x* **|** *v3.x.x*
 - ~~Kali Linux 2.0~~
 - ~~TOR~~
 
@@ -25,6 +35,11 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   -m MODE, --mode MODE  modes: 0 => 16 bots; 1 => 8 bots; 2 => 4 bots; 3 => 2 bots
+```
+
+### Usage
+```
+python instagram.py <username> <wordlist> -m <mode>
 ```
 
 ### Bots(Threads)
