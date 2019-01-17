@@ -25,13 +25,13 @@ browser_data = {
 }
 
 # Login
-fetch_time = (25, 30)
+fetch_time = 25
 response_codes = { 'succeed': 0, 'failed': 1, 'locked': -1 }
 
 # Limits
 max_bad_proxies = 128
-max_time_to_wait = 25
 max_bots_per_proxy = 16
+max_time_to_wait = fetch_time
 
 # Misc
 debug = False
