@@ -72,9 +72,8 @@ class Bruter(object):
                         with self.lock:
                             self.proxy_manager.bad_proxy(browser.proxy)
 
-                    with self.lock:
-                        self.browsers.pop(self.browsers.index(browser))
-                        self.active_passwords.pop(self.active_passwords.index(password))
+                    self.remove_browser(browser)
+
                 else:
                     if browser.start_time:
                         if time() - browser.start_time >= max_time_to_wait:
@@ -82,6 +81,12 @@ class Bruter(object):
                             
                             with self.lock:
                                 self.proxy_manager.bad_proxy(browser.proxy)
+    
+    def remove_browser(self, browser):
+        if browser in self.browsers:
+            with self.lock:
+                self.browsers.pop(self.browsers.index(browser))
+                self.active_passwords.pop(self.active_passwords.index(browser.password))
 
     def attack(self):
         proxy = None  
@@ -121,7 +126,10 @@ class Bruter(object):
             for browser in browsers:
                 thread = Thread(target=browser.attempt)
                 thread.daemon = True 
-                thread.start()
+                try:
+                    thread.start()
+                except RuntimeError:
+                    self.remove_browser(browser)
 
     def start_daemon_threads(self):
         attack = Thread(target=self.attack)
@@ -172,3 +180,4 @@ class Bruter(object):
         self.is_alive = False 
         self.manage_session()
         self.stop_daemon_threads() 
+        self.session.is_busy = False

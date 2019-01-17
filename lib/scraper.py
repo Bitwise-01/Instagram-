@@ -56,7 +56,7 @@ class Scraper(object):
         if not proxies:
             with self.lock:
                 if self.is_alive:
-                    self.display.warning('Failed to grab proxies, check your connection')
+                    self.display.warning('Failed to grab proxies from {}'.format(link))
         
         for proxy in proxies:
             with self.lock:
@@ -76,7 +76,7 @@ class Scraper(object):
         if not proxies:
             with self.lock:
                 if self.is_alive:
-                    self.display.warning('Failed to grab proxies, check your connection')
+                    self.display.warning('Failed to grab proxies from {}'.format(self.extra_proxies_link))
         
         for proxy in proxies:
             if '-H' in proxy and '-S' in proxy:

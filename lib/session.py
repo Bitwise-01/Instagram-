@@ -9,6 +9,8 @@ from csv import DictWriter, DictReader
 
 class Session(object):
 
+    is_busy = False
+
     def __init__(self, username, passlist):
         self.file = '.{}_{}.csv'.format(username, passlist.replace('\\', '_').replace('/', '_'))
 
@@ -21,19 +23,33 @@ class Session(object):
             session = DictReader(csvfile, delimiter = ',')
             try:return [_ for _ in session][0]
             except:pass 
-
-    def write(self, attempts, queue):
-        if not attempts:return
+    
+    def _write(self, attempts, _list):
         with open(self.file, 'w') as csvfile:
             fieldnames = ['attempts', 'list']
             writer = DictWriter(csvfile, fieldnames=fieldnames)
 
             writer.writeheader()
-            writer.writerow({ 'attempts': attempts, 'list': queue })
-
+            writer.writerow({ 'attempts': attempts, 'list': _list })
+        
+    def write(self, attempts, _list):
+        if not attempts:
+            return
+        
+        while Session.is_busy:
+            pass 
+        
+        try:
+            Session.is_busy = True
+            self._write(attempts, _list)
+        except:
+            pass 
+        finally:
+            Session.is_busy = False        
+        
     def delete(self):
         if self.exists:
             try:
                 remove(self.file) 
             except:
-                pass
+                pass 
