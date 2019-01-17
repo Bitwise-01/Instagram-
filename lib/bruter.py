@@ -78,10 +78,7 @@ class Bruter(object):
                     if browser.start_time:
                         if time() - browser.start_time >= max_time_to_wait:
                             browser.is_active = False 
-                            
-                            with self.lock:
-                                self.proxy_manager.bad_proxy(browser.proxy)
-    
+                                
     def remove_browser(self, browser):
         if browser in self.browsers:
             with self.lock:
@@ -164,7 +161,7 @@ class Bruter(object):
                 sleep(1.5)
                 continue 
     
-            for browser in self.browsers:                   
+            for browser in self.browsers:          
                 
                 self.display.stats(browser.password, self.password_manager.attempts, len(self.browsers))
                 last_attempt = self.password_manager.attempts
