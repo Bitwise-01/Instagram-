@@ -25,7 +25,7 @@ browser_data = {
 }
 
 # Login
-fetch_time = (5, 10)
+fetch_time = (25, 30)
 response_codes = { 'succeed': 0, 'failed': 1, 'locked': -1 }
 
 # Limits
