@@ -15,7 +15,6 @@ from .const import max_time_to_wait, max_bots_per_proxy
 class Bruter(object):
 
     def __init__(self, username, threads, passlist_path, resume):
-        self.proxy = None 
         self.browsers = []
         self.lock = RLock()
         self.password = None 
@@ -67,8 +66,7 @@ class Bruter(object):
 
                         with self.lock:
                             self.password_manager.list_remove(password) 
-                    else:
-                        self.proxy = None                  
+                    else:                  
                         with self.lock:
                             self.proxy_manager.bad_proxy(browser.proxy)
 
@@ -96,15 +94,14 @@ class Bruter(object):
                 if not self.is_alive:
                     break 
 
-                if not self.proxy:
-                    self.proxy = self.proxy_manager.get_proxy()
-                    self.bots_per_proxy = 0
-                    proxy = self.proxy  
+                if not proxy:
+                    proxy = self.proxy_manager.get_proxy()
+                    self.bots_per_proxy = 0                
 
                 if self.bots_per_proxy >= max_bots_per_proxy:
-                    self.proxy = None 
+                    proxy = None 
 
-                if not self.proxy:
+                if not proxy:
                     continue
                                 
                 if not password in self.active_passwords and password in self.password_manager.passlist:
