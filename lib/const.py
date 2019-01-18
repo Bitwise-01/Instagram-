@@ -4,9 +4,6 @@
 
 # Browser
 header = {
-    'connection': 'close',
-    'accept-language': 'en-US,en;q=0.9',
-    'accept-encoding': 'gzip, deflate, br',
     'referer': 'https://www.instagram.com/',
     'content-type': 'application/x-www-form-urlencoded'
 }
