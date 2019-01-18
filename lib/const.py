@@ -26,7 +26,7 @@ fetch_time = (5, 10)
 response_codes = { 'succeed': 0, 'failed': 1, 'locked': -1 }
 
 # Limits
-max_bad_proxies = 64
+max_bad_proxies = 128
 max_time_to_wait = 15
 max_bots_per_proxy = 16
 
