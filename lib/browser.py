@@ -3,11 +3,14 @@
 # Description: Browser
 
 from time import time 
+from random import choice
 from requests import Session
-from .const import browser_data, response_codes, fetch_time, debug
+from .const import browser_data, response_codes, fetch_time, user_agents, debug
 
 
 class Browser(object):
+
+    account_exists = None
 
     def __init__(self, username, password, proxy):
         self.proxy = proxy 
@@ -21,9 +24,12 @@ class Browser(object):
         self.is_attempted = False 
         
     def br(self):
+        header = browser_data['header']
+        header['user-agent'] = choice(user_agents)
+
         session = Session()
+        session.headers.update(header)
         session.proxies.update(self.proxy.addr)
-        session.headers.update(browser_data['header'])
         return session     
     
     def get_token(self): 
@@ -45,6 +51,10 @@ class Browser(object):
             pass 
         finally:
             return response
+    
+    def check_exists(self, response):
+        if 'user' in response:
+            self.account_exists = response['user']
 
     def check_response(self, response):
         if 'authenticated' in response:
@@ -79,7 +89,10 @@ class Browser(object):
 
             if resp_code == response_codes['succeed']:
                 resp['accessed'] = True 
-                                        
+            
+            if self.account_exists == None:
+                self.check_exists(response)
+
         return resp
 
     def attempt(self):

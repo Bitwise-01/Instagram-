@@ -13,6 +13,7 @@ from platform import system as platform
 class Display(object):
 
     __is_color = None 
+    account_exists = None 
 
     def __init__(self, username=None, passlist=None, is_color=None):
         self.delay = 1.3
@@ -35,6 +36,7 @@ class Display(object):
 
     def stats(self, password, attempts, browsers, load=True):  
         self.clear()
+        account_exists = self.account_exists if self.account_exists != None else ''
 
         if self.__is_color:
             print('{0}[{1}-{0}] {1}Wordlist: {2}{3}{4}'.format(
@@ -57,9 +59,13 @@ class Display(object):
                 Fore.YELLOW, Fore.WHITE, Fore.CYAN, browsers, Fore.RESET
             ))
 
+            print('{0}[{1}-{0}] {1}Exists: {2}{3}{4}'.format(
+                Fore.YELLOW, Fore.WHITE, Fore.CYAN, account_exists, Fore.RESET
+            ))
+
         else:            
-            print('[-] Wordlist: {}\n[-] Username: {}\n[-] Password: {}\n[-] Attempts: {}\n[-] Browsers: {}'.format(
-                self.passlist, self.username, password, attempts, browsers
+            print('[-] Wordlist: {}\n[-] Username: {}\n[-] Password: {}\n[-] Attempts: {}\n[-] Browsers: {}\n[-] Exists: {}'.format(
+                self.passlist, self.username, password, attempts, browsers, account_exists
             ))
 
         if load:

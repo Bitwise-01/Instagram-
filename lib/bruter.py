@@ -34,7 +34,7 @@ class Bruter(object):
 
             if data:
                 self.password_manager.passlist = eval(data['list'])
-                self.password_manager.attempts = int(data['attempts'])                
+                self.password_manager.attempts = int(data['attempts'])  
 
     def manage_session(self):
         if self.password_manager.is_read:
@@ -53,6 +53,9 @@ class Bruter(object):
 
                 if not self.is_alive:
                     break 
+
+                if self.display.account_exists == None and browser.account_exists != None:
+                    self.display.account_exists = browser.account_exists
 
                 if not browser.is_active:
                     
