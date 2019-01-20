@@ -54,7 +54,7 @@ class Browser(object):
     
     def check_exists(self, response):
         if 'user' in response:
-            self.account_exists = response['user']
+            Browser.account_exists = response['user']
 
     def check_response(self, response):
         if 'authenticated' in response:
@@ -90,7 +90,7 @@ class Browser(object):
             if resp_code == response_codes['succeed']:
                 resp['accessed'] = True 
             
-            if self.account_exists == None:
+            if Browser.account_exists == None:
                 self.check_exists(response)
 
         return resp

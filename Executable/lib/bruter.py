@@ -54,8 +54,8 @@ class Bruter(object):
                 if not self.is_alive:
                     break 
 
-                if self.display.account_exists == None and browser.account_exists != None:
-                    self.display.account_exists = browser.account_exists
+                if Display.account_exists == None and Browser.account_exists != None:
+                    Display.account_exists = browser.account_exists
 
                 if not browser.is_active:
                     
