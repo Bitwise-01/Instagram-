@@ -13,6 +13,23 @@ This program will brute force any Instagram account you send it its way. Just gi
 
 [![Donate](https://img.shields.io/badge/PayPal-Donate-orange.svg)]( https://www.paypal.me/Msheikh03)
 
+### Donations Received
+| Donation Number | Amount Donated |
+|      :----:     |      :----:    | 
+|        1        |      $35.00    |
+|        2        |      $10.00    |
+|        3        |      $20.00    |
+
+### Donations Statistics
+| Donation Number | Amount Donated |
+|      :----:     |      :----:    | 
+|        Min      |      $10.00    |
+|        Max      |      $35.00    |
+|        Avg      |      $21.67    |
+|        Total    |      $65.00    |
+
+
+
 ### Requirements
 - Python *v2.7.x* **|** *v3.x.x*
 - ~~Kali Linux 2.0~~
