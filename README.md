@@ -19,14 +19,15 @@ This program will brute force any Instagram account you send it its way. Just gi
 |        1        |      $35.00    |
 |        2        |      $10.00    |
 |        3        |      $20.00    |
+|        4        |      $1.00     |
 
 ### Donations Statistics
 |   Measurement   | Amount Donated |
 |      :----:     |      :----:    | 
-|        Min      |      $10.00    |
+|        Min      |      $1.00     |
 |        Max      |      $35.00    |
-|        Avg      |      $21.67    |
-|        Total    |      $65.00    |
+|        Avg      |      $16.50    |
+|        Total    |      $66.00    |
 
 
 
