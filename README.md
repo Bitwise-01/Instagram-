@@ -3,33 +3,10 @@
 [![Version](https://img.shields.io/badge/Version-v2.1.0-blue.svg)]()
 [![Python](https://img.shields.io/badge/Python-v2.7--3-blue.svg)]()
 [![Discord](https://img.shields.io/badge/Chat-Server-brightgreen.svg)](https://discord.gg/SMUaWmn)
+[![Donate](https://img.shields.io/badge/PayPal-Donate-orange.svg)]( https://www.paypal.me/Msheikh03)
 <br>
 
 This program will brute force any Instagram account you send it its way. Just give it a target, a password list and a mode then press enter and forget about it. No need to worry about anonymity when using this program, its highest priority is your anonymity, it only attacks when your identity is hidden. 
-
-
-### Support
-**It's not easy maintaining this code, a donation of any size will be appreciated**<br>
-
-[![Donate](https://img.shields.io/badge/PayPal-Donate-orange.svg)]( https://www.paypal.me/Msheikh03)
-
-### Donations Received
-| Donation Number | Amount Donated |
-|      :----:     |      :----:    | 
-|        1        |      $35.00    |
-|        2        |      $10.00    |
-|        3        |      $20.00    |
-|        4        |      $1.00     |
-
-### Donations Statistics
-|   Measurement   | Amount Donated |
-|      :----:     |      :----:    | 
-|        Min      |      $1.00     |
-|        Max      |      $35.00    |
-|        Avg      |      $16.50    |
-|        Total    |      $66.00    |
-
-
 
 ### Requirements
 - Python *v2.7.x* **|** *v3.x.x*
