@@ -3,6 +3,7 @@
 # Description: Password manager 
 
 from time import sleep
+from lib.display import Display
 
 
 class PasswordManager(object):
@@ -31,9 +32,24 @@ class PasswordManager(object):
             self.passlist.pop(self.passlist.index(password))
             self.session.write(self.attempts, self.passlist)
     
+    def count_lines(self):
+        lines = 0
+        buffer = 1024 << 10
+
+        with open(self.passlist_path, 'rb') as f:
+
+            chunk = f.raw.read(buffer)
+
+            while chunk:
+                lines += chunk.count(b'\n')
+                chunk = f.raw.read(buffer)
+        
+        return lines
+    
     def read(self):
         attempts = 0
-        with open(self.passlist_path, 'rt') as passlist:
+        Display.total_lines = self.count_lines()
+        with open(self.passlist_path, 'rt', encoding='utf-8') as passlist:
 
             for password in passlist:
                 if not self.is_alive:
