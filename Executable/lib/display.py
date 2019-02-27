@@ -7,6 +7,7 @@ from time import sleep
 from .const import debug
 from colorama import Fore 
 from builtins import input
+from sys import version_info
 from platform import system as platform 
 
 
@@ -68,14 +69,16 @@ class Display(object):
                 Fore.YELLOW, Fore.WHITE, Fore.CYAN, account_exists, Fore.RESET
             ))
 
-            print('{0}[{1}-{0}] {1}Complete: {2}{3}%{4}'.format(
-                Fore.YELLOW, Fore.WHITE, Fore.CYAN, complete, Fore.RESET
-            ))
+            if version_info[0] == 3:
+                print('{0}[{1}-{0}] {1}Complete: {2}{3}%{4}'.format(
+                    Fore.YELLOW, Fore.WHITE, Fore.CYAN, complete, Fore.RESET
+                ))
 
         else:            
-            print('[-] Wordlist: {}\n[-] Username: {}\n[-] Password: {}\n[-] Attempts: {}\n[-] Browsers: {}\n[-] Exists: {}\n[-] Complete: {}%'.format(
-                self.passlist, self.username, password, attempts, browsers, account_exists, complete
+            print('[-] Wordlist: {}\n[-] Username: {}\n[-] Password: {}\n[-] Attempts: {}\n[-] Browsers: {}\n[-] Exists: {}{}'.format(
+                self.passlist, self.username, password, attempts, browsers, account_exists, '\n[-] Complete: {}%'.format(complete) if version_info[0] == 3 else ''
             ))
+            
         if load:
             sleep(self.delay)
     

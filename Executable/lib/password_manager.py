@@ -3,7 +3,11 @@
 # Description: Password manager 
 
 from time import sleep
+from sys import version_info
 from lib.display import Display
+
+if version_info[0] == 2:
+    from io import open
 
 
 class PasswordManager(object):
@@ -34,15 +38,15 @@ class PasswordManager(object):
     
     def count_lines(self):
         lines = 0
-        buffer = 1024 << 10
+        buffer = 256 << 12
 
         with open(self.passlist_path, 'rb') as f:
 
-            chunk = f.raw.read(buffer)
+            chunk = f.read(buffer)
 
             while chunk:
                 lines += chunk.count(b'\n')
-                chunk = f.raw.read(buffer)
+                chunk = f.read(buffer)
         
         return lines
     

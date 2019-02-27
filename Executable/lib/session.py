@@ -3,8 +3,12 @@
 # Description: Session Handler
 
 from os import remove
+from sys import version_info
 from os.path import exists as path 
 from csv import DictWriter, DictReader
+
+if version_info[0] == 2:
+    from io import open
 
 
 class Session(object):
@@ -19,13 +23,13 @@ class Session(object):
         return path(self.file)
 
     def read(self):
-        with open(self.file, 'rt') as csvfile:
+        with open(self.file, 'rt', encoding='utf-8') as csvfile:
             session = DictReader(csvfile, delimiter = ',')
             try:return [_ for _ in session][0]
             except:pass 
     
     def _write(self, attempts, _list):
-        with open(self.file, 'w') as csvfile:
+        with open(self.file, 'wt', encoding='utf-8') as csvfile:
             fieldnames = ['attempts', 'list']
             writer = DictWriter(csvfile, fieldnames=fieldnames)
 
