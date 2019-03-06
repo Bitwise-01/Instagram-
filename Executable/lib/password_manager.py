@@ -48,7 +48,7 @@ class PasswordManager(object):
                 lines += chunk.count(b'\n')
                 chunk = f.read(buffer)
         
-        return lines
+        return lines + 1
     
     def read(self):
         attempts = 0

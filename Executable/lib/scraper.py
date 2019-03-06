@@ -5,6 +5,7 @@
 from time import sleep
 from requests import get 
 from .proxy import Proxy 
+from random import randint
 from .display import Display
 from .proxy_list import ProxyList
 from bs4 import BeautifulSoup as bs 
@@ -106,4 +107,4 @@ class Scraper(object):
                 if not proxy in proxy_list:
                     proxy_list.append(Proxy(proxy))
 
-        return proxy_list.list  
+        return [proxy_list.list.pop(randint(0, len(proxy_list.list)-1)) for _ in range(len(proxy_list.list))] 
