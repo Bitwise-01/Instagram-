@@ -35,7 +35,7 @@ class Browser(object):
     def get_token(self): 
         token = None        
         try:
-            token = self.browser.get(browser_data['home_url']).cookies.get_dict()['csrftoken']
+            token = self.browser.get(browser_data['home_url'], timeout=fetch_time).cookies.get_dict()['csrftoken']
         except:
             pass 
         finally:

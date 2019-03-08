@@ -11,7 +11,7 @@ from .bad_proxies import BadProxies
 class ProxyManager(object):
 
     def __init__(self):
-        self.is_alive = True 
+        self.is_alive = True
         self.proxies = Queue()
         self.scraper = Scraper()
         self.bad_proxies = BadProxies()
@@ -24,7 +24,7 @@ class ProxyManager(object):
                     if not proxy in self.bad_proxies:
                         self.proxies.put(proxy)
                         
-            sleep(0.5)
+            sleep(5)
 
     def bad_proxy(self, proxy):
         if not proxy in self.bad_proxies:

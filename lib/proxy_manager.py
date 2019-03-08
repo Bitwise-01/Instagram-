@@ -24,7 +24,7 @@ class ProxyManager(object):
                     if not proxy in self.bad_proxies:
                         self.proxies.put(proxy)
                         
-            sleep(0.5)
+            sleep(5)
 
     def bad_proxy(self, proxy):
         if not proxy in self.bad_proxies:

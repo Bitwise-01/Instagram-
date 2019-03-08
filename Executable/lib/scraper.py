@@ -7,6 +7,7 @@ from requests import get
 from .proxy import Proxy 
 from random import randint
 from .display import Display
+from .const import fetch_time
 from .proxy_list import ProxyList
 from bs4 import BeautifulSoup as bs 
 from threading import Thread, RLock
@@ -50,7 +51,7 @@ class Scraper(object):
         proxies = [] 
 
         try:
-            proxies = bs(get(link).text, 'html.parser').find('tbody').find_all('tr')
+            proxies = bs(get(link, timeout=fetch_time).text, 'html.parser').find('tbody').find_all('tr')
         except:
             pass 
         
@@ -70,7 +71,7 @@ class Scraper(object):
 
         try:
             if self.is_alive:
-                proxies = get(self.extra_proxies_link).text.split('\n')
+                proxies = get(self.extra_proxies_link, timeout=fetch_time).text.split('\n')
         except:
             pass 
         
