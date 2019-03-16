@@ -1,15 +1,15 @@
 # Date: 12/28/2018
 # Author: Mohamed
-# Description: Proxy scraper 
+# Description: Proxy scraper
 
 from time import sleep
-from requests import get 
-from .proxy import Proxy 
+from requests import get
+from .proxy import Proxy
 from random import randint
 from .display import Display
 from .const import fetch_time
 from .proxy_list import ProxyList
-from bs4 import BeautifulSoup as bs 
+from bs4 import BeautifulSoup as bs
 from threading import Thread, RLock
 
 
@@ -17,13 +17,13 @@ class Scraper(object):
 
     def __init__(self):
         self.lock = RLock()
-        self.is_alive = True  
+        self.is_alive = True
         self.display = Display()
         self.scraped_proxies = []
         self.extra_proxies_link = 'http://spys.me/proxy.txt'
 
         self.links = [
-            'https://sslproxies.org', 
+            'https://sslproxies.org',
             'https://free-proxy-list.net',
             'https://free-proxy-list.net/anonymous-proxy.html'
         ]
@@ -36,76 +36,81 @@ class Scraper(object):
             'ip': addr[0],
             'port': addr[1],
             'country': proxy[1].split('-')[0]
-        }        
+        }
 
     def parse_proxy(self, proxy):
         proxy = proxy.find_all('td')
         if proxy[4].string != 'transparent' and proxy[5].string != 'transparent':
-            return { 
+            return {
                 'ip': proxy[0].string,
                 'port': proxy[1].string,
-                'country': proxy[3].string,
+                'country': proxy[3].string
             }
 
     def scrape_proxies(self, link):
-        proxies = [] 
+        proxies = []
 
         try:
-            proxies = bs(get(link, timeout=fetch_time).text, 'html.parser').find('tbody').find_all('tr')
+            proxies = bs(get(link, timeout=fetch_time).text,
+                         'html.parser').find('tbody').find_all('tr')
         except:
-            pass 
-        
+            pass
+
         if not proxies:
             with self.lock:
                 if self.is_alive:
-                    self.display.warning('Failed to grab proxies from {}'.format(link))
-        
+                    self.display.warning(
+                        'Failed to grab proxies from {}'.format(link))
+
         for proxy in proxies:
             with self.lock:
                 _proxy = self.parse_proxy(proxy)
                 if _proxy:
                     self.scraped_proxies.append(_proxy)
-            
+
     def scrape_extra_proxies(self):
-        proxies = [] 
+        proxies = []
 
         try:
             if self.is_alive:
-                proxies = get(self.extra_proxies_link, timeout=fetch_time).text.split('\n')
+                proxies = get(self.extra_proxies_link,
+                              timeout=fetch_time).text.split('\n')
         except:
-            pass 
-        
+            pass
+
         if not proxies:
             with self.lock:
                 if self.is_alive:
-                    self.display.warning('Failed to grab proxies from {}'.format(self.extra_proxies_link))
-        
+                    self.display.warning(
+                        'Failed to grab proxies from {}'.format(self.extra_proxies_link))
+
         for proxy in proxies:
             if '-H' in proxy and '-S' in proxy:
                 with self.lock:
-                    self.scraped_proxies.append(self.parse_extra_proxy(proxy))                    
-            
+                    self.scraped_proxies.append(self.parse_extra_proxy(proxy))
+
     @property
     def proxies(self):
         proxy_list = ProxyList()
 
         threads = []
-        threads = [Thread(target=self.scrape_proxies, args=[link]) for link in self.links]
+        threads = [Thread(target=self.scrape_proxies, args=[link])
+                   for link in self.links]
         threads.append(Thread(target=self.scrape_extra_proxies))
-        
+
         for thread in threads:
-            thread.daemon = True 
+            thread.daemon = True
             thread.start()
-        
+
         while self.is_alive and len(threads):
             for thread in [thread for thread in threads if not thread.is_alive()]:
                 threads.pop(threads.index(thread))
-            sleep(0.5)            
-            
+            sleep(0.5)
+
         if self.is_alive:
             for proxy in self.scraped_proxies:
 
                 if not proxy in proxy_list:
                     proxy_list.append(Proxy(proxy))
 
-        return [proxy_list.list.pop(randint(0, len(proxy_list.list)-1)) for _ in range(len(proxy_list.list))] 
+        return [proxy_list.list.pop(randint(0, len(proxy_list.list)-1)) for _ in range(len(proxy_list.list))]
