@@ -1,32 +1,32 @@
 # 12/29/2018
-# Author: Mohamed 
-# Description: Display 
+# Author: Mohamed
+# Description: Display
 
 from os import system
-from time import sleep 
+from time import sleep
 from .const import debug
-from colorama import Fore 
+from colorama import Fore
 from builtins import input
 from sys import version_info
-from platform import system as platform 
+from platform import system as platform
 
 
 class Display(object):
 
     __is_color = None
-    total_lines = None 
-    account_exists = None  
+    total_lines = None
+    account_exists = None
 
     def __init__(self, username=None, passlist=None, is_color=None):
         self.delay = 1.3
         self.username = username
         self.passlist = passlist
-        self.colors_disabled = True 
+        self.colors_disabled = True
         self.cls = 'cls' if platform() == 'Windows' else 'clear'
 
-        if Display.__is_color == None :
+        if Display.__is_color == None:
             Display.__is_color = is_color
-    
+
     def wait(self):
         input('\nPress Enter to Continue ...')
 
@@ -35,11 +35,11 @@ class Display(object):
             system(self.cls)
 
             if self.colors_disabled and self.__is_color:
-                self.colors_disabled = False 
+                self.colors_disabled = False
         else:
-            print('\n\n')           
+            print('\n\n')
 
-    def stats(self, password, attempts, browsers, load=True):  
+    def stats(self, password, attempts, browsers, load=True):
         self.clear()
         complete = round((attempts/Display.total_lines) * 100, 2)
         account_exists = self.account_exists if self.account_exists != None else ''
@@ -57,6 +57,10 @@ class Display(object):
                 Fore.YELLOW, Fore.WHITE, Fore.CYAN, password, Fore.RESET
             ))
 
+            print('{0}[{1}-{0}] {1}Complete: {2}{3}%{4}'.format(
+                Fore.YELLOW, Fore.WHITE, Fore.CYAN, complete, Fore.RESET
+            ))
+
             print('{0}[{1}-{0}] {1}Attempts: {2}{3}{4}'.format(
                 Fore.YELLOW, Fore.WHITE, Fore.CYAN, attempts, Fore.RESET
             ))
@@ -69,23 +73,20 @@ class Display(object):
                 Fore.YELLOW, Fore.WHITE, Fore.CYAN, account_exists, Fore.RESET
             ))
 
-            if version_info[0] == 3:
-                print('{0}[{1}-{0}] {1}Complete: {2}{3}%{4}'.format(
-                    Fore.YELLOW, Fore.WHITE, Fore.CYAN, complete, Fore.RESET
-                ))
+        else:
+            print(
+                f'[-] Wordlist: {self.passlist}\n[-] Username: {self.username}\n[-] Password: {password}')
 
-        else:            
-            print('[-] Wordlist: {}\n[-] Username: {}\n[-] Password: {}\n[-] Attempts: {}\n[-] Browsers: {}\n[-] Exists: {}{}'.format(
-                self.passlist, self.username, password, attempts, browsers, account_exists, '\n[-] Complete: {}%'.format(complete) if version_info[0] == 3 else ''
-            ))
-            
+            print(
+                f'Complete: {complete}\n[-] Attempts: {attempts}\n[-] Browsers: {browsers}\n[-] Exists: {account_exists}')
+
         if load:
             sleep(self.delay)
-    
+
     def stats_found(self, password, attempts, browsers):
         self.stats(password, attempts, browsers, load=False)
 
-        if self.__is_color:        
+        if self.__is_color:
             print('\n{0}[{1}!{0}] {2}Password Found{3}'.format(
                 Fore.YELLOW, Fore.RED, Fore.WHITE, Fore.RESET
             ))
@@ -101,13 +102,13 @@ class Display(object):
             print('\n[!] Password Found\n[+] Username: {}\n[+] Password: {}'.format(
                 self.username.title(), password
             ))
-        
-        sleep(self.delay)
-    
-    def stats_not_found(self, password, attempts, browsers):
-        self.stats(password, attempts, browsers, load=False)  
 
-        if self.__is_color:      
+        sleep(self.delay)
+
+    def stats_not_found(self, password, attempts, browsers):
+        self.stats(password, attempts, browsers, load=False)
+
+        if self.__is_color:
             print('\n{0}[{1}!{0}] {2}Password Not Found{3}'.format(
                 Fore.YELLOW, Fore.RED, Fore.WHITE, Fore.RESET
             ))
@@ -115,7 +116,7 @@ class Display(object):
             print('\n[!] Password Not Found')
 
         sleep(self.delay)
-    
+
     def shutdown(self, password, attempts, browsers):
         self.stats(password, attempts, browsers, load=False)
 
@@ -127,7 +128,7 @@ class Display(object):
             print('\n[!] Shutting Down ...')
 
         sleep(self.delay)
-    
+
     def info(self, msg, delay=True):
         self.clear()
 
@@ -140,7 +141,7 @@ class Display(object):
 
         if delay:
             sleep(2.5)
-    
+
     def warning(self, msg, newline=True):
 
         if newline:
@@ -154,12 +155,12 @@ class Display(object):
             print('[!] {}'.format(msg))
 
         sleep(self.delay)
-    
+
     def prompt(self, data, newline=True):
 
         if newline:
             self.clear()
-        
+
         if self.__is_color:
             return input('{0}[{1}?{0}] {2}{3}{4}'.format(
                 Fore.YELLOW, Fore.CYAN, Fore.WHITE, data, Fore.RESET
