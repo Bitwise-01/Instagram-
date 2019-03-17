@@ -1,16 +1,16 @@
 # Instagram Bruter
 
-[![Version](https://img.shields.io/badge/Version-v2.1.0-blue.svg)]()
-[![Python](https://img.shields.io/badge/Python-v2.7--3-blue.svg)]()
-[![Discord](https://img.shields.io/badge/Chat-Server-brightgreen.svg)](https://discord.gg/SMUaWmn)
-[![Donate](https://img.shields.io/badge/PayPal-Donate-orange.svg)](https://www.paypal.me/Msheikh03)
+[![Version](https://img.shields.io/badge/version-v2.1.1-blue.svg)]()
+[![Python](https://img.shields.io/badge/python-v3-blue.svg)]()
+[![Discord](https://img.shields.io/discord/532621311017484307.svg)](https://discord.gg/SMUaWmn)
+[![Donate](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/Msheikh03)
 <br>
 
 This program will brute force any Instagram account you send it its way. Just give it a target, a password list and a mode then press enter and forget about it. No need to worry about anonymity when using this program, its highest priority is your anonymity, it only attacks when your identity is hidden.
 
 ### Requirements
 
--   Python _v2.7.x_ **|** _v3.x.x_
+-   Python _v3.x.x_
 -   ~~Kali Linux 2.0~~
 -   ~~TOR~~
 
@@ -32,7 +32,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -m MODE, --mode MODE  modes: 0 => 16 bots; 1 => 8 bots; 2 => 4 bots; 3 => 2 bots
+  -m MODE, --mode MODE  modes: 0 => 32 bots; 1 => 16 bots; 2 => 8 bots; 3 => 4 bots
 ```
 
 ### Usage
@@ -43,17 +43,17 @@ python instagram.py <username> <wordlist> -m <mode>
 
 ### Bots(Threads)
 
--   2 bots: 32 passwords at a time
 -   4 bots: 64 passwords at a time
 -   8 bots: 128 passwords at a time
 -   16 bots: 256 passwords at a time
+-   32 bots: 512 passwords at a time
 
 ### Modes
 
--   0: 16 bots
--   1: 8 bots
--   2: 4 bots
--   3: 2 bots
+-   0: 32 bots
+-   1: 16 bots
+-   2: 8 bots
+-   3: 4 bots
 
 ### Chill mode
 
