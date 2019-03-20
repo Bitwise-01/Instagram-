@@ -17,13 +17,13 @@ This program will brute force any Instagram account you send it its way. Just gi
 ### Install Dependencies
 
 ```
-python install.py
+python3 install.py
 ```
 
 ### Help
 
 ```
-C:\Users\Mohamed\Desktop\Instagram>python instagram.py -h
+C:\Users\Mohamed\Desktop\Instagram>python3 instagram.py -h
 usage: instagram.py [-h] [-m MODE] username wordlist
 
 positional arguments:
@@ -38,7 +38,7 @@ optional arguments:
 ### Usage
 
 ```
-python instagram.py <username> <wordlist> -m <mode>
+python3 instagram.py <username> <wordlist> -m <mode>
 ```
 
 ### Bots(Threads)
@@ -60,7 +60,7 @@ python instagram.py <username> <wordlist> -m <mode>
 This mode uses only 4 bots, or 64 passwords at a time.
 
 ```
-C:\Users\Mohamed\Desktop\Instagram>python instagram.py Sami09.1 pass.lst -m 3
+C:\Users\Mohamed\Desktop\Instagram>python3 instagram.py Sami09.1 pass.lst -m 3
 ```
 
 ### Moderate mode 1
@@ -68,7 +68,7 @@ C:\Users\Mohamed\Desktop\Instagram>python instagram.py Sami09.1 pass.lst -m 3
 This mode uses 8 bots, or 128 passwords at a time.
 
 ```
-C:\Users\Mohamed\Desktop\Instagram>python instagram.py Sami09.1 pass.lst -m 2
+C:\Users\Mohamed\Desktop\Instagram>python3 instagram.py Sami09.1 pass.lst -m 2
 ```
 
 ### Moderate mode 2
@@ -76,7 +76,7 @@ C:\Users\Mohamed\Desktop\Instagram>python instagram.py Sami09.1 pass.lst -m 2
 This mode uses 16 bots, or 256 passwords at a time.
 
 ```
-C:\Users\Mohamed\Desktop\Instagram>python instagram.py Sami09.1 pass.lst -m 1
+C:\Users\Mohamed\Desktop\Instagram>python3 instagram.py Sami09.1 pass.lst -m 1
 ```
 
 ### Savage mode
@@ -84,7 +84,7 @@ C:\Users\Mohamed\Desktop\Instagram>python instagram.py Sami09.1 pass.lst -m 1
 This mode uses 32 bots, or 512 passwords at a time.
 
 ```
-C:\Users\Mohamed\Desktop\Instagram>python instagram.py Sami09.1 pass.lst -m 0
+C:\Users\Mohamed\Desktop\Instagram>python3 instagram.py Sami09.1 pass.lst -m 0
 ```
 
 ### If you don't specify a mode, then mode is set to 2
