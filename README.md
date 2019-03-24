@@ -17,7 +17,7 @@ This program will brute force any Instagram account you send it its way. Just gi
 ### Install Dependencies
 
 ```
-python3 install.py
+pip3 install -r requirements.txt
 ```
 
 ### Help
