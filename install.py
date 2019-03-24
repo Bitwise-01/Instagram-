@@ -3,7 +3,7 @@
 # Description: Install file
 
 from time import sleep
-from queue import Queue 
+from queue import Queue
 from os.path import exists
 from subprocess import Popen
 from threading import Thread, RLock
@@ -11,41 +11,44 @@ from threading import Thread, RLock
 
 class Install:
 
-    def __init__(self, path_to_req): 
+    def __init__(self, path_to_req):
         self.lock = RLock()
         self.is_alive = True
-        self.is_reading = True 
-        self.is_installing = False 
+        self.is_reading = True
+        self.is_installing = False
         self.requirements = Queue()
         self.path_to_req = path_to_req
-    
-    @property 
+
+    @property
     def path_exists(self):
         return exists(self.path_to_req)
-    
+
     def read_file(self):
-        with open('requirements.txt', mode='rt') as file: 
+        with open('requirements.txt', mode='rt') as file:
             for line in file:
                 if line:
                     with self.lock:
                         self.requirements.put(line.replace('\n', ''))
 
-        self.is_reading = False 
+        self.is_reading = False
 
-    def install(self, name):
-        print('[+] Installing {} ...'.format(name))
-        cmd = 'pip install {}'.format(name)
+    def install(self, name, retried=False):
+        print(f'[+] Installing {name} ...')
+        cmd = f'pip install {name}' if not retried else f'pip3 install {name}'
         cmd = cmd.split()
 
         try:
-            self.is_installing = True 
+            self.is_installing = True
             Popen(cmd).wait()
         except:
-            print('[!] Failed to install {}'.format(name))
+            if retried:
+                print(f'[!] Failed to install {name}')
+            else:
+                self.install(name, True)
         finally:
             print('\n')
-            self.is_installing = False 
-    
+            self.is_installing = False
+
     def install_all(self):
         while self.is_alive:
 
@@ -58,8 +61,8 @@ class Install:
         read_thread = Thread(target=self.read_file)
         install_all_thread = Thread(target=self.install_all)
 
-        read_thread.daemon = True 
-        install_all_thread.daemon = True 
+        read_thread.daemon = True
+        install_all_thread.daemon = True
 
         read_thread.start()
         install_all_thread.start()
@@ -72,17 +75,17 @@ class Install:
 
                 try:
                     if not self.is_reading and not self.requirements.qsize() and not self.is_installing:
-                        self.stop() 
+                        self.stop()
                     sleep(0.5)
                 except KeyboardInterrupt:
-                    self.stop()             
+                    self.stop()
 
         else:
-            print('[*] Unable to locate the file requirements.txt') 
-    
+            print('[*] Unable to locate the file requirements.txt')
+
     def stop(self):
-        self.is_alive = False 
-    
+        self.is_alive = False
+
 
 if __name__ == '__main__':
     path_to_req = 'requirements.txt'
