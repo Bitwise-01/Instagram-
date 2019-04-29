@@ -31,6 +31,9 @@ user_agents = [
 
 # Browser
 header = {
+    'x-ig-app-id': '936619743392459',
+    'x-instagram-ajax': '2f6bf8b37c04',
+    'x-requested-with': 'XMLHttpRequest',
     'referer': 'https://www.instagram.com/',
     'content-type': 'application/x-www-form-urlencoded'
 }

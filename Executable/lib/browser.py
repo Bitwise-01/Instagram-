@@ -37,6 +37,12 @@ class Browser(object):
         try:
             token = self.browser.get(
                 browser_data['home_url'], timeout=fetch_time).cookies.get_dict()['csrftoken']
+
+            self.browser.headers.update({
+                'cookie': 'mid=XLzTtAALAAEb-Sz-JUGbyLphzGmc; csrftoken={}; rur={}'.format(
+                    token, self.browser.cookies.get_dict()['rur']
+                )
+            })
         except:
             pass
         finally:
