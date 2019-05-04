@@ -10,6 +10,10 @@
 
 This program will brute force any Instagram account you send it its way. Just give it a target, a password list and a mode then press enter and forget about it. No need to worry about anonymity when using this program, its highest priority is your anonymity, it only attacks when your identity is hidden.
 
+# NOTICE
+
+This project is no longer maintained; I got bored of it. So, please don't ask me for help. Peace be with you.
+
 ### Requirements
 
 -   Python _v3.x.x_
