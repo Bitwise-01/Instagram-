@@ -128,7 +128,7 @@ class Bruter(object):
                 thread.daemon = True
                 try:
                     thread.start()
-                except RuntimeError:
+                except:
                     self.remove_browser(browser)
 
     def start_daemon_threads(self):

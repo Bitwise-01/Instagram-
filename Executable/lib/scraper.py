@@ -98,9 +98,15 @@ class Scraper(object):
                    for link in self.links]
         threads.append(Thread(target=self.scrape_extra_proxies))
 
-        for thread in threads:
-            thread.daemon = True
-            thread.start()
+        index = 0
+        while index < len(threads) and self.is_alive:
+            thread = threads[index]
+
+            try:
+                thread.start()
+                index += 1
+            except:
+                sleep(0.5)
 
         while self.is_alive and len(threads):
             for thread in [thread for thread in threads if not thread.is_alive()]:

@@ -87,7 +87,8 @@ class Bruter(object):
             with self.lock:
                 self.browsers.pop(self.browsers.index(browser))
                 self.active_passwords.pop(
-                    self.active_passwords.index(browser.password))
+                    self.active_passwords.index(browser.password)
+                )
 
     def attack(self):
         proxy = None
@@ -128,7 +129,7 @@ class Bruter(object):
                 thread.daemon = True
                 try:
                     thread.start()
-                except RuntimeError:
+                except:
                     self.remove_browser(browser)
 
     def start_daemon_threads(self):
