@@ -2,6 +2,8 @@
 # Author: Mohamed
 # Description: Constants
 
+import os
+
 # User agents
 user_agents = [
     'Googlebot/2.1 (+http://www.google.com/bot.html)',
@@ -64,3 +66,11 @@ max_bots_per_proxy = 16
 debug = False
 credentials = 'accounts.txt'
 modes = {0: 512, 1: 256, 2: 128, 3: 64}
+
+# Database
+db_dir = 'database'
+db_session = 'session.db'
+db_path = os.path.join(db_dir, db_session)
+
+if not os.path.exists(db_dir):
+    os.mkdir(db_dir)

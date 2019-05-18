@@ -5,7 +5,6 @@
 from sys import exit
 from os.path import exists
 from lib.bruter import Bruter
-from lib.session import Session
 from lib.display import Display
 from platform import python_version
 from lib.const import credentials, modes
@@ -22,7 +21,6 @@ class Engine(object):
         self.username = username
         self.passlist_path = passlist_path
         self.display = Display(is_color=is_color)
-        self.session = Session(username, passlist_path)
 
     def passlist_path_exists(self):
         if not exists(self.passlist_path):
@@ -30,12 +28,12 @@ class Engine(object):
             return False
         return True
 
-    def session_exists(self):
-        return self.session.exists
-
     def create_bruter(self):
-        self.bruter = Bruter(self.username, self.threads,
-                             self.passlist_path, self.resume)
+        self.bruter = Bruter(
+            self.username,
+            self.threads,
+            self.passlist_path
+        )
 
     def get_user_resp(self):
         return self.display.prompt('Would you like to resume the attack? [y/n]: ')
@@ -50,20 +48,24 @@ class Engine(object):
         if not self.passlist_path_exists():
             self.is_alive = False
 
-        if self.session_exists() and self.is_alive:
-            resp = None
-
-            try:
-                resp = self.get_user_resp()
-            except:
-                self.is_alive = False
-
-            if resp and self.is_alive:
-                if resp.strip().lower() == 'y':
-                    self.resume = True
-
         if self.is_alive:
             self.create_bruter()
+
+            while self.is_alive and not self.bruter.password_manager.session:
+                pass
+
+            if not self.is_alive:
+                return
+
+            if self.bruter.password_manager.session.exists:
+                try:
+                    resp = self.get_user_resp()
+                except:
+                    self.is_alive = False
+
+                if resp and self.is_alive:
+                    if resp.strip().lower() == 'y':
+                        self.bruter.password_manager.resume = True
 
             try:
                 self.bruter.start()

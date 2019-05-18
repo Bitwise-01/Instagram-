@@ -1,26 +1,28 @@
 # Date: 12/28/2018
-# Author: Mohamed 
-# Description: Password manager 
+# Author: Mohamed
+# Description: Password manager
 
 from time import sleep
+from hashlib import sha256
 from sys import version_info
 from lib.display import Display
-
-if version_info[0] == 2:
-    from io import open
+from lib.session import Session
 
 
 class PasswordManager(object):
 
-    def __init__(self, passlist_path, max_passwords, session, resume):
+    def __init__(self, username, passlist_path, max_passwords):
         self.passlist = []
-        self.is_alive = True 
-        self.resume = resume
-        self.is_read = False 
-        self.session = session 
+        self.session = None
+        self.resume = False
+        self.is_alive = True
+        self.is_read = False
+        self.fingerprint = None
+        self.username = username
         self.passwords_removed = 0
         self.passlist_path = passlist_path
         self.max_passwords = max_passwords
+        Display.total_lines = self.count_lines()
 
     @property
     def list_size(self):
@@ -29,68 +31,78 @@ class PasswordManager(object):
     def list_add(self, password):
         if not password in self.passlist:
             self.passlist.append(password)
-        
+
     def list_remove(self, password):
         if password in self.passlist:
             self.attempts += 1
             self.passlist.pop(self.passlist.index(password))
             self.session.write(self.attempts, self.passlist)
-    
+
     def count_lines(self):
         lines = 0
-        buffer = 256 << 12
+        buffer = 256 << 23  # 4 bytes
+        fingerprint = sha256(
+            self.username.lower().strip().encode()
+        ).hexdigest().encode()
 
         with open(self.passlist_path, 'rb') as f:
 
-            chunk = f.read(buffer)
+            data = f.read(buffer)
 
-            while chunk:
-                lines += chunk.count(b'\n')
-                chunk = f.read(buffer)
-        
+            while data:
+                lines += data.count(b'\n')
+                data = f.read(buffer)
+                chunk = sha256(data).hexdigest().encode()
+                fingerprint = sha256(fingerprint + chunk).hexdigest().encode()
+
+        self.fingerprint = fingerprint
+        self.session = Session(self.fingerprint)
+
         return lines + 1
-    
+
     def read(self):
         attempts = 0
-        Display.total_lines = self.count_lines()
         with open(self.passlist_path, 'rt', encoding='utf-8') as passlist:
 
             for password in passlist:
                 if not self.is_alive:
-                    break 
-                
+                    break
+
                 if self.resume:
+                    self.attempts, self.passlist = self.session.read()
+
                     if attempts < (self.attempts + self.list_size):
                         attempts += 1
                         continue
                     else:
                         self.resume = False
 
-                password = password.replace('\n', '').replace('\r', '').replace('\t', '')
-                
+                password = password.replace('\n', '').replace(
+                    '\r', '').replace('\t', '')
+
                 if self.list_size < self.max_passwords:
                     self.list_add(password)
-                else:                    
+                else:
                     while self.list_size >= self.max_passwords and self.is_alive:
                         sleep(0.5)
-                    
+
                     if self.is_alive:
                         self.list_add(password)
                         self.session.write(self.attempts, self.passlist)
 
         if self.is_alive:
-            self.is_read = True 
-    
+            self.is_read = True
+
     @property
     def attempts(self):
         return self.passwords_removed
-    
+
     @attempts.setter
     def attempts(self, n):
         self.passwords_removed = n
-    
+
     def start(self):
-        self.read()         
-    
+        self.read()
+
     def stop(self):
         self.is_alive = False

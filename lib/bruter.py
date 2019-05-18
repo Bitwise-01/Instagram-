@@ -3,18 +3,17 @@
 # Description: Bruter
 
 from time import time, sleep
-from .browser import Browser
-from .session import Session
-from .display import Display
+from lib.browser import Browser
+from lib.display import Display
 from threading import Thread, RLock
-from .proxy_manager import ProxyManager
-from .password_manager import PasswordManager
-from .const import max_time_to_wait, max_bots_per_proxy
+from lib.proxy_manager import ProxyManager
+from lib.password_manager import PasswordManager
+from lib.const import max_time_to_wait, max_bots_per_proxy
 
 
 class Bruter(object):
 
-    def __init__(self, username, threads, passlist_path, resume):
+    def __init__(self, username, threads, passlist_path):
         self.browsers = []
         self.lock = RLock()
         self.password = None
@@ -26,27 +25,19 @@ class Bruter(object):
         self.active_passwords = []
         self.proxy_manager = ProxyManager()
         self.display = Display(username, passlist_path)
-        self.session = Session(username, passlist_path)
-        self.password_manager = PasswordManager(
-            passlist_path, threads, self.session, resume)
-
-        if resume:
-            data = self.session.read()
-
-            if data:
-                self.password_manager.passlist = eval(data['list'])
-                self.password_manager.attempts = int(data['attempts'])
+        self.password_manager = PasswordManager(username,
+                                                passlist_path, threads)
 
     def manage_session(self):
         if self.password_manager.is_read:
             if not self.password_manager.list_size or self.is_found:
-                self.session.delete()
+                self.password_manager.session.delete()
         else:
             if self.is_found:
-                self.session.delete()
+                self.password_manager.session.delete()
             else:
-                self.session.write(self.password_manager.attempts,
-                                   self.password_manager.passlist)
+                self.password_manager.session.write(self.password_manager.attempts,
+                                                    self.password_manager.passlist)
 
     def browser_manager(self):
         while self.is_alive:
@@ -182,4 +173,4 @@ class Bruter(object):
         self.is_alive = False
         self.manage_session()
         self.stop_daemon_threads()
-        self.session.is_busy = False
+        self.password_manager.session.is_busy = False
