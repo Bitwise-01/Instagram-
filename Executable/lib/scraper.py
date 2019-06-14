@@ -7,10 +7,10 @@ from requests import get
 from .proxy import Proxy
 from random import randint
 from .display import Display
-from .const import fetch_time
 from .proxy_list import ProxyList
 from bs4 import BeautifulSoup as bs
 from threading import Thread, RLock
+from .const import fetch_time, debug
 
 
 class Scraper(object):
@@ -58,7 +58,7 @@ class Scraper(object):
 
         if not proxies:
             with self.lock:
-                if self.is_alive:
+                if self.is_alive and debug:
                     self.display.warning(
                         'Failed to grab proxies from {}'.format(link))
 
@@ -80,7 +80,7 @@ class Scraper(object):
 
         if not proxies:
             with self.lock:
-                if self.is_alive:
+                if self.is_alive and debug:
                     self.display.warning(
                         'Failed to grab proxies from {}'.format(self.extra_proxies_link))
 
@@ -103,6 +103,7 @@ class Scraper(object):
             thread = threads[index]
 
             try:
+                thread.daemon = True
                 thread.start()
                 index += 1
             except:

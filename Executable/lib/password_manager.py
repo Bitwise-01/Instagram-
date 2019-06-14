@@ -11,12 +11,13 @@ from lib.session import Session
 
 class PasswordManager(object):
 
-    def __init__(self, username, passlist_path, max_passwords):
+    def __init__(self, username, passlist_path, max_passwords, display):
         self.passlist = []
         self.session = None
         self.resume = False
         self.is_alive = True
         self.is_read = False
+        self.display = display
         self.fingerprint = None
         self.username = username
         self.passwords_removed = 0
@@ -40,18 +41,17 @@ class PasswordManager(object):
 
     def count_lines(self):
         lines = 0
-        buffer = 256 << 23  # 4 bytes
+
         fingerprint = sha256(
             self.username.lower().strip().encode()
         ).hexdigest().encode()
 
-        with open(self.passlist_path, 'rb') as f:
+        self.display.info('Reading wordlist ...')
 
-            data = f.read(buffer)
+        with open(self.passlist_path, 'rb', buffering=(2 << 29)) as f:
 
-            while data:
-                lines += data.count(b'\n')
-                data = f.read(buffer)
+            for data in f:
+                lines += 1
                 chunk = sha256(data).hexdigest().encode()
                 fingerprint = sha256(fingerprint + chunk).hexdigest().encode()
 
