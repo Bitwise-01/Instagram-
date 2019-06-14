@@ -26,7 +26,7 @@ class Bruter(object):
         self.proxy_manager = ProxyManager()
         self.display = Display(username, passlist_path)
         self.password_manager = PasswordManager(username,
-                                                passlist_path, threads)
+                                                passlist_path, threads, self.display)
 
     def manage_session(self):
         if self.password_manager.is_read:

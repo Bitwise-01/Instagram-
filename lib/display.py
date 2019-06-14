@@ -37,7 +37,7 @@ class Display(object):
 
     def stats(self, password, attempts, browsers, load=True):
         self.clear()
-        complete = round((attempts/Display.total_lines) * 100, 2)
+        complete = round((attempts/Display.total_lines) * 100, 4)
         account_exists = self.account_exists if self.account_exists != None else ''
 
         if self.__is_color:
