@@ -48,7 +48,7 @@ class PasswordManager(object):
 
         self.display.info('Reading wordlist ...')
 
-        with open(self.passlist_path, 'rb', buffering=(2 << 29)) as f:
+        with open(self.passlist_path, 'rb') as f:
 
             for data in f:
                 lines += 1
