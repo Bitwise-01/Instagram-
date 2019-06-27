@@ -12,7 +12,7 @@ This program will brute force any Instagram account you send it its way. Just gi
 
 # NOTICE
 
-This project is no longer maintained; I got bored of it. So, please don't ask me for help. Peace be with you.
+This project is no longer maintained; use version 3.0.0 at https://www.youtube.com/watch?v=l6B9BaslDS8
 
 ### Requirements
 
