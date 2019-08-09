@@ -120,13 +120,13 @@ def args():
 
 if __name__ == '__main__':
 
-    if int(python_version()[0]) < 3:
+    if int(python_version()[0]) != 3:
         print('[!] Please use Python 3')
         exit()
 
-    arugments = args()
-    mode = arugments.mode
-    username = arugments.username
-    passlist = arugments.passlist
-    is_color = True if not arugments.color else False
+    arguments = args()
+    mode = arguments.mode
+    username = arguments.username
+    passlist = arguments.passlist
+    is_color = not arguments.color
     Engine(username, modes[mode], passlist, is_color).start()

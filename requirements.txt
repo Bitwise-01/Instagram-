@@ -2,3 +2,4 @@ bs4
 future
 requests
 colorama
+user_agent
