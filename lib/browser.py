@@ -5,7 +5,8 @@
 from time import time
 from random import choice
 from requests import Session
-from .const import browser_data, response_codes, fetch_time, user_agents, debug
+from .const import browser_data, response_codes, fetch_time, debug
+from user_agent import generate_user_agent
 
 
 class Browser(object):
@@ -25,7 +26,7 @@ class Browser(object):
 
     def br(self):
         header = browser_data['header']
-        header['user-agent'] = choice(user_agents)
+        header['user-agent'] = generate_user_agent()
 
         session = Session()
         session.headers.update(header)
