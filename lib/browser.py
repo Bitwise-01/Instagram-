@@ -2,9 +2,9 @@
 # Author: Mohamed
 # Description: Browser
 
-from time import time
-from random import choice
+from time import time, sleep
 from requests import Session
+from random import choice, randint
 from .const import browser_data, response_codes, fetch_time, user_agents, debug
 
 
@@ -32,19 +32,18 @@ class Browser(object):
         session.proxies.update(self.proxy.addr)
         return session
 
+    def reduce_load(self):
+        for _ in range(randint(15, 30)):
+            self.start_time = time()
+            sleep(0.5)
+
     def get_token(self):
         token = None
         try:
             token = self.browser.get(
                 browser_data['home_url'], timeout=fetch_time).cookies.get_dict()['csrftoken']
-
-            self.browser.headers.update({
-                'cookie': 'mid=XLzTtAALAAEb-Sz-JUGbyLphzGmc; csrftoken={}; rur={}'.format(
-                    token, self.browser.cookies.get_dict()['rur']
-                )
-            })
         except:
-            pass
+            self.reduce_load()
         finally:
             return token
 
@@ -57,7 +56,7 @@ class Browser(object):
             response = self.browser.post(
                 browser_data['login_url'], data=data, timeout=fetch_time).json()
         except:
-            pass
+            self.reduce_load()
         finally:
             return response
 
