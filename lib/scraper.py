@@ -23,9 +23,9 @@ class Scraper(object):
         self.extra_proxies_link = 'http://spys.me/proxy.txt'
 
         self.links = [
-            'https://free-proxy-list.net/anonymous-proxy.html',
-            'https://free-proxy-list.net',
             'https://sslproxies.org',
+            'https://free-proxy-list.net',
+            'https://free-proxy-list.net/anonymous-proxy.html',
         ]
 
     def parse_extra_proxy(self, proxy):
