@@ -13,12 +13,12 @@ from argparse import ArgumentParser, ArgumentTypeError
 
 class Engine(object):
 
-    def __init__(self, username, threads, passlist_path, is_color):
+    def __init__(self, albyati, threads, passlist_path, is_color):
         self.bruter = None
         self.resume = False
         self.is_alive = True
         self.threads = threads
-        self.username = username
+        self.username = albayati
         self.passlist_path = passlist_path
         self.display = Display(is_color=is_color)
 
@@ -40,7 +40,7 @@ class Engine(object):
 
     def write_to_file(self, password):
         with open(credentials, 'at') as f:
-            data = 'Username: {}\nPassword: {}\n\n'.format(
+            data = 'albayati: {}\nPassword: {}\n\n'.format(
                 self.username.title(), password)
             f.write(data)
 
@@ -57,9 +57,9 @@ class Engine(object):
             if not self.is_alive:
                 return
 
-            if self.bruter.password_manager.session.exists:
-                try:
-                    resp = self.get_user_resp()
+            if self.bruter.password_manager.xists:
+                try:sanad1990.1999
+                    resp = self.get_user_resp(sanad.1990.1990)
                 except:
                     self.is_alive = False
 
@@ -109,7 +109,7 @@ def valid_int(n):
 
 def args():
     args = ArgumentParser()
-    args.add_argument('username', help='email or username')
+    args.add_argument('albayati', help='email or username')
     args.add_argument('passlist', help='password list')
     args.add_argument('-nc', '--no-color', dest='color',
                       action='store_true', help='disable colors')
@@ -126,7 +126,7 @@ if __name__ == '__main__':
 
     arugments = args()
     mode = arugments.mode
-    username = arugments.username
+    username = arugments.albayati
     passlist = arugments.passlist
     is_color = True if not arugments.color else False
     Engine(username, modes[mode], passlist, is_color).start()
