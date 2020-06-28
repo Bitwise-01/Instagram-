@@ -2,17 +2,19 @@
 
 [![Version](https://img.shields.io/badge/version-v2.1.1-blue.svg)]()
 [![Python](https://img.shields.io/badge/python-v3-blue.svg)]()
-[![Discord](https://img.shields.io/discord/532621311017484307.svg)](https://discord.gg/jvhJMeb)
+[![Discord](https://img.shields.io/discord/532621311017484307.svg)](https://discord.gg/C6AFrWQ)
 [![Donate](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/Msheikh03)
-<br>
-**Bitcoin wallet:** 3Kr5C9t9HWwPfqzSNXeBNyRvJWw9sSLeKy
-<br>
 
 This program will brute force any Instagram account you send it its way. Just give it a target, a password list and a mode then press enter and forget about it. No need to worry about anonymity when using this program, its highest priority is your anonymity, it only attacks when your identity is hidden.
 
-# NOTICE
+### NOTICE
 
-This project is no longer maintained; use version 3.0.1 at [here](https://www.youtube.com/watch?v=4JkQiKbCfsM)
+This project is currently be updated to version 3.0.2, please be patient. If you want support me, the links are below.
+
+### Support me
+  >>**Bitcoin wallet:** 3Kr5C9t9HWwPfqzSNXeBNyRvJWw9sSLeKy<br>
+  >>**PayPal:** https://www.paypal.me/Msheikh03
+  
 
 ### Requirements
 
