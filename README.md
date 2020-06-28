@@ -12,8 +12,8 @@ This program will brute force any Instagram account you send it its way. Just gi
 This project is currently be updated to version 3.0.2, please be patient. If you want support me, the links are below.
 
 ### Support me
-  >>**Bitcoin wallet:** 3Kr5C9t9HWwPfqzSNXeBNyRvJWw9sSLeKy<br>
-  >>**PayPal:** https://www.paypal.me/Msheikh03
+  >**Bitcoin wallet:** 3Kr5C9t9HWwPfqzSNXeBNyRvJWw9sSLeKy<br>
+  >**PayPal:** https://www.paypal.me/Msheikh03
   
 
 ### Requirements
