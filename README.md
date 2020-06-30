@@ -1,9 +1,9 @@
 # Instagram Bruter
 
-[![Version](https://img.shields.io/badge/version-v2.1.1-blue.svg)]()
-[![Python](https://img.shields.io/badge/python-v3-blue.svg)]()
-[![Discord](https://img.shields.io/discord/532621311017484307.svg)](https://discord.gg/C6AFrWQ)
-[![Donate](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.me/Msheikh03)
+[![Version](https://img.shields.io/badge/Version-v2.1.1-blue)]()
+[![Python](https://img.shields.io/badge/Python-v3.6%2B-blue)]()
+[![Discord](https://img.shields.io/badge/Discord-server-blue)](https://discord.gg/C6AFrWQ)
+[![Donate](https://img.shields.io/badge/PayPal-donate-orange)](https://www.paypal.me/Msheikh03)
 
 This program will brute force any Instagram account you send it its way. Just give it a target, a password list and a mode then press enter and forget about it. No need to worry about anonymity when using this program, its highest priority is your anonymity, it only attacks when your identity is hidden.
 
