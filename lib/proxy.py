@@ -23,4 +23,4 @@ class Proxy(object):
     @property
     def addr(self):
         addr = '{}:{}'.format(self.proxy['ip'], self.proxy['port'])
-        return {'http': addr, 'https': addr}
+        return {'http': f'http://{addr}', 'https': f'http://{addr}'}

@@ -1,2 +1,4 @@
 database
 __pycache__
+.vscode
+env_insta

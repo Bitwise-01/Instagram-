@@ -41,7 +41,7 @@ header = {
 }
 
 username_field = 'username'
-password_field = 'password'
+password_field = 'enc_password'
 home_url = 'https://www.instagram.com/'
 login_url = 'https://www.instagram.com/accounts/login/ajax/'
 

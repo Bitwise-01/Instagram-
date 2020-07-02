@@ -4,6 +4,7 @@
 
 from time import time
 from requests import Session
+from datetime import datetime
 from random import choice, randint
 from .const import browser_data, response_codes, fetch_time, user_agents, debug
 
@@ -33,27 +34,29 @@ class Browser(object):
         return session
 
     def get_token(self):
-        token = None
         try:
-            token = self.browser.get(
+            return self.browser.get(
                 browser_data['home_url'], timeout=fetch_time).cookies.get_dict()['csrftoken']
         except:
             pass
-        finally:
-            return token
 
     def post_data(self):
-        response = None
-        data = {browser_data['username_field']: self.username,
-                browser_data['password_field']: self.password}
+        enc_password = '#PWD_INSTAGRAM_BROWSER:0:{}:{}'.format(
+            int(datetime.now().timestamp()), self.password)
+
+        data = {
+            browser_data['username_field']: self.username,
+            browser_data['password_field']: enc_password
+        }
 
         try:
-            response = self.browser.post(
-                browser_data['login_url'], data=data, timeout=fetch_time).json()
+            return self.browser.post(
+                browser_data['login_url'],
+                data=data,
+                timeout=fetch_time
+            ).json()
         except:
             pass
-        finally:
-            return response
 
     def check_exists(self, response):
         if 'user' in response:
