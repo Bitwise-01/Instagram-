@@ -70,11 +70,11 @@ class Display(object):
             ))
 
         else:
-            print(
-                f'[-] Wordlist: {self.passlist}\n[-] Username: {self.username}\n[-] Password: {password}')
+            printf(
+                '[-] Wordlist: {self.passlist}\n[-] Username: {self.username}\n[-] Password: {password}')
 
-            print(
-                f'Complete: {complete}\n[-] Attempts: {attempts}\n[-] Browsers: {browsers}\n[-] Exists: {account_exists}')
+            printf(
+                'Complete: {complete}\n[-] Attempts: {attempts}\n[-] Browsers: {browsers}\n[-] Exists: {account_exists}')
 
         if load:
             sleep(self.delay)
