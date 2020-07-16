@@ -2,3 +2,6 @@ bs4
 future
 requests
 colorama
+frane
+isus
+franeisus
