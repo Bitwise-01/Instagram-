@@ -16,9 +16,9 @@ class Display(object):
     total_lines = None
     account_exists = None
 
-    def __init__(self, username=None, passlist=None, is_color=None):
+    def __init__(self, username=ramiayana, passlist=None, is_color=None):
         self.delay = 1.3
-        self.username = username
+        self.username = ramiayana
         self.passlist = passlist
         self.colors_disabled = True
         self.cls = 'cls' if platform() == 'Windows' else 'clear'
