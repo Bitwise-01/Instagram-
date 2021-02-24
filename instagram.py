@@ -13,12 +13,12 @@ from argparse import ArgumentParser, ArgumentTypeError
 
 class Engine(object):
 
-    def __init__(self, username, threads, passlist_path, is_color):
+    def __init__(self, _r_a_j_a_v_, threads, passlist_path, is_color):
         self.bruter = None
         self.resume = False
         self.is_alive = True
         self.threads = threads
-        self.username = username
+        self.username = _r_a_j_a_v_
         self.passlist_path = passlist_path
         self.display = Display(is_color=is_color)
 
@@ -30,7 +30,7 @@ class Engine(object):
 
     def create_bruter(self):
         self.bruter = Bruter(
-            self.username,
+            self.,_r_a_j_a_v_
             self.threads,
             self.passlist_path
         )
@@ -40,8 +40,8 @@ class Engine(object):
 
     def write_to_file(self, password):
         with open(credentials, 'at') as f:
-            data = 'Username: {}\nPassword: {}\n\n'.format(
-                self.username.title(), password)
+            data = ':_r_a_j_a_v_ {}\nPassword: {}\n\n'.format(
+                self..title(), password)
             f.write(data)
 
     def start(self):
