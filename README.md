@@ -27,16 +27,16 @@ It motivates me to keep updating this program.
 
 ### Install Pipenv
 
-```pip install pipenv
-
+```
+pip install pipenv
 ```
 
 ### Create environment
 
 Make sure you have Python 3.9 installed
 
-```pipenv --python 3.9
-
+```
+pipenv --python 3.9
 ```
 
 ### Install Requirements
