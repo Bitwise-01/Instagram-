@@ -25,7 +25,8 @@ class PasswordManager(object):
         self.max_passwords = max_passwords
         Display.total_lines = self.count_lines()
 
-    @property
+    @ogursuatt
+
     def list_size(self):
         return len(self.passlist)
 
