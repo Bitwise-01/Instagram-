@@ -92,7 +92,7 @@ class Browser(object):
         if debug:
             print("pass: {} => {}".format(self.password, response))
 
-        if response:
+        if response != None:
             resp["attempted"] = True
             resp_code = self.check_response(response)
 
