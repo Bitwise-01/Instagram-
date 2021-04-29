@@ -143,3 +143,4 @@ python instagram.py -u <username> -p <passlist>
 [+] Username: Sami09.1
 [+] Password: Sami123
 ```
+### All Mode are Perfect, You should Use it.Thankx
