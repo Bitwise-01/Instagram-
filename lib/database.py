@@ -143,7 +143,7 @@ class Proxy(DatabaseWrapper):
             proxy_id TEXT,
             ip TEXT,
             port INTEGER,
-            
+            proxy_type TEXT,
             PRIMARY KEY(proxy_id)
         );
         """
@@ -180,7 +180,9 @@ class Proxy(DatabaseWrapper):
             != 0
         )
 
-    def add_proxy(self, *, ip: str, port: int) -> str:
+    def add_proxy(
+        self, *, ip: str, port: int, proxy_type: str = "http"
+    ) -> typing.Optional[str]:
         """Add a proxy into the database.
 
         Returns: proxy_id when successful
@@ -188,7 +190,11 @@ class Proxy(DatabaseWrapper):
 
         # preprocess
         ip = ip.strip()
+        proxy_type = proxy_type.strip().lower()
         proxy_id = self.__get_signature(ip=ip, port=port)
+
+        if proxy_type not in ["http", "https", "socks4", "socks5"]:
+            return None
 
         # check for existance
         if self.__exists(proxy_id):
@@ -197,10 +203,10 @@ class Proxy(DatabaseWrapper):
         # add to database
         self.db_execute(
             """
-        INSERT INTO Proxy(proxy_id, ip, port)
-        VALUES(?, ?, ?);
+        INSERT INTO Proxy(proxy_id, ip, port, proxy_type)
+        VALUES(?, ?, ?, ?);
         """,
-            args=[proxy_id, ip, port],
+            args=[proxy_id, ip, port, proxy_type],
         )
 
         self.db_execute(
@@ -237,15 +243,31 @@ class Proxy(DatabaseWrapper):
     def __parse_proxy(self, proxy_data: tuple) -> dict:
         """Get a tuple of proxy and turns it into a dict."""
 
+        ip, port, proxy_type = proxy_data[1], proxy_data[2], proxy_data[3]
+
+        if proxy_type == "http" or proxy_type == "https":
+            proxy_addr = f"http://{ip}:{port}"
+        elif proxy_type == "socks4":
+            proxy_addr = f"socks4://{ip}:{port}"
+        elif proxy_type == "socks5":
+            proxy_addr = f"socks5://{ip}:{port}"
+
+        addr = {
+            "http": proxy_addr,
+            "https": proxy_addr,
+        }
+
         return {
             "ip": proxy_data[1],
             "port": proxy_data[2],
+            "proxy_type": proxy_data[3],
             "time_added": proxy_data[4],
             "last_used": proxy_data[5],
             "last_updated": proxy_data[6],
             "total_used": proxy_data[7],
             "total_passed": proxy_data[8],
             "score": proxy_data[10],
+            "addr": addr,
         }
 
     def get_proxy(self, proxy_id: str) -> dict:
