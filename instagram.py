@@ -13,7 +13,7 @@ from lib.proxy_manager import ProxyManager
 from lib.bruter import Bruter
 from lib.display import Display
 from platform import python_version
-
+from requests_html import HTMLSession
 from lib.const import credentials, modes
 from argparse import ArgumentParser, ArgumentTypeError
 
