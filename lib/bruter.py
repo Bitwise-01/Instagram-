@@ -219,8 +219,6 @@ class Bruter(object):
         browser_manager.start()
         password_manager.start()
 
-        self.display.info("Searching for proxies...")
-
     def stop_daemon_threads(self):
         self.password_manager.stop()
 

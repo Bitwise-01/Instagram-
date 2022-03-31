@@ -3,23 +3,23 @@
 # Description: Proxy
 
 import time
+import typing
 
 
 class Proxy(object):
-    def __init__(self, ip: str, port: int) -> None:
+    def __init__(self, ip: str, port: int, addr: typing.Dict) -> None:
         self.__ip = ip
         self.__port = port
         self.__total_used = 0
         self.__total_passed = 0
         self.__last_used = None
+        self.__addr = addr
 
     @property
     def addr(self) -> dict:
         self.__total_used += 1
         self.__last_used = time.time()
-
-        addr = f"{self.__ip}:{self.__port}"
-        return {"http": f"http://{addr}", "https": f"http://{addr}"}
+        return self.__addr
 
     def incr_success(self) -> None:
         """Incremented when proxy works"""

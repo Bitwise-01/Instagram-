@@ -5,10 +5,16 @@ name = "pypi"
 
 [packages]
 bs4 = "*"
-requests = "*"
+requests = {extras = ["socks"], version = "*"}
 colorama = "*"
+pysocks = "*"
+requests-html = "*"
 
 [dev-packages]
+black = "*"
 
 [requires]
 python_version = "3.9"
+
+[pipenv]
+allow_prereleases = true

@@ -221,7 +221,6 @@ def display_database_stats():
         if avg <= 0.9
         else "Very-healthy"
     )
-
     print(f"\nTotal Proxies: {total}\nDatabase's Health: {health}")
     print(
         f"Q1: {q1} :: Avg Score: {avg}  ::  Min Score: {min}  ::  Max Score: {max}"

