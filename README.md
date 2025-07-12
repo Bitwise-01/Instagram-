@@ -1,6 +1,8 @@
 # Instagram Bruter
 
-[![Version](https://img.shields.io/badge/Version-3.1.0-green)]()
+[![Version](https://img.shields.io/badge/Version-3.1.0-g
+
+reen)]()
 [![Python](https://img.shields.io/badge/Python-v3.9-yellow)]()
 [![Discord](https://img.shields.io/badge/Discord-server-blue)](https://discord.gg/VYRAZg5)
 [![Donate](https://img.shields.io/badge/PayPal-donate-orange)](https://www.paypal.me/Msheikh03)
@@ -53,7 +55,7 @@ usage: instagram.py [-h] [-u USERNAME] [-p PASSLIST] [-px PROXYLIST] [--prune PR
 optional arguments:
   -h, --help            show this help message and exit
   -u USERNAME, --username USERNAME
-                        email or username
+                        @jatinrock128
   -p PASSLIST, --passlist PASSLIST
                         password list
   -px PROXYLIST, --proxylist PROXYLIST
@@ -120,7 +122,7 @@ python instagram.py -u <username> -p <passlist>
 
 ```
 [-] Wordlist: passlist.txt
-[-] Username: Sami09.1
+[-] Username: jatinrock128
 [-] Password: 272
 [-] Complete: 45.51%
 [-] Attempts: 228
@@ -132,8 +134,8 @@ python instagram.py -u <username> -p <passlist>
 
 ```
 [-] Wordlist: passlist.txt
-[-] Username: Sami09.1
-[-] Password: Sami123
+[-] Username: Jatinrock128
+[-] Password: 
 [-] Complete: 62.67%
 [-] Attempts: 314
 [-] Browsers: 185
