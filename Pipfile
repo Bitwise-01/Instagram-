@@ -9,6 +9,7 @@ requests = {extras = ["socks"], version = "*"}
 colorama = "*"
 pysocks = "*"
 requests-html = "*"
+rich = "*"
 
 [dev-packages]
 black = "*"
