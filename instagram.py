@@ -1,15 +1,12 @@
 # Date: 12/29/2018
 # Author: Mohamed
-# Description: Instagram bruter
 
-# from lib.proxy import Proxy
 import os
 import time
 from sys import exit
 from lib import database
 from lib.proxy_manager import ProxyManager
 
-# from os.path import exists
 from lib.bruter import Bruter
 from lib.display import Display
 from platform import python_version
@@ -17,6 +14,13 @@ from platform import python_version
 from lib.const import credentials, modes
 from argparse import ArgumentParser, ArgumentTypeError
 
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
+from rich.prompt import Prompt
+
+console = Console()
 
 class Engine(object):
     def __init__(self, username, threads, passlist_path, is_color):
@@ -29,16 +33,13 @@ class Engine(object):
         self.bruter = Bruter(username, threads, passlist_path)
 
     def get_user_resp(self):
-        return self.display.prompt(
-            "Would you like to resume the attack? [y/N]: "
-        )
+        return self.display.prompt("Would you like to resume the attack? [y/N]: ")
 
     def write_to_file(self, password):
         with open(credentials, "at") as f:
-            data = "Username: {}\nPassword: {}\n\n".format(
-                self.username.title(), password
-            )
+            data = "Username: {}\nPassword: {}\n\n".format(self.username.title(), password)
             f.write(data)
+        console.print(Panel(f"[green]Saved credentials for {self.username.title()}[/green]", border_style="green"))
 
     def start(self):
 
@@ -51,8 +52,9 @@ class Engine(object):
         if self.bruter.password_manager.session.exists:
             try:
                 resp = self.get_user_resp()
-            except:
+            except Exception:
                 self.is_alive = False
+                resp = None
 
             if resp and self.is_alive:
                 if resp.strip().lower() == "y":
@@ -176,24 +178,17 @@ def args():
 def prune_database(prune: float) -> None:
     score = prune * 100
 
-    if (
-        input(
-            "Are you sure you want to prune the database of proxies? [y/N]: "
-        )
-        == "y"
-    ):
+    resp = Prompt.ask("Are you sure you want to prune the database of proxies? [y/N]", default="N")
+    if resp.strip().lower() == "y":
 
-        print(
-            f"\n<<< Pruning the database of all proxies with a score of {score}% or less >>>"
-        )
+        console.print(Panel(Text(f"<<< Pruning the database of all proxies with a score of {score}% or less >>>"), border_style="green"))
         time.sleep(0.65)
 
-        print(
-            f"Pruned the database of {database.Proxy().prune(prune)} proxies"
-        )
+        pruned = database.Proxy().prune(prune)
+        console.print(Panel(Text(f"Pruned the database of {pruned} proxies"), border_style="green"))
         time.sleep(0.65)
     else:
-        print("Pruning cancelled")
+        console.print(Panel(Text("Pruning cancelled"), border_style="green"))
 
 
 def display_database_stats():
@@ -203,8 +198,8 @@ def display_database_stats():
 
     q1 = round(data["q1"], place)
     avg = round(data["avg"], place)
-    min = round(data["min"], place)
-    max = round(data["max"], place)
+    min_ = round(data["min"], place)
+    max_ = round(data["max"], place)
     total = data["total"]
     health = (
         "Dead"
@@ -221,10 +216,18 @@ def display_database_stats():
         if avg <= 0.9
         else "Very-healthy"
     )
-    print(f"\nTotal Proxies: {total}\nDatabase's Health: {health}")
-    print(
-        f"Q1: {q1} :: Avg Score: {avg}  ::  Min Score: {min}  ::  Max Score: {max}"
-    )
+
+    tbl = Table(title="[green]Proxy Database Statistics[/green]", show_lines=False, box=None)
+    tbl.add_column("Metric", style="cyan", justify="right")
+    tbl.add_column("Value", style="white", justify="left")
+    tbl.add_row("Total Proxies", str(total))
+    tbl.add_row("Database's Health", health)
+    tbl.add_row("Q1", str(q1))
+    tbl.add_row("Avg Score", str(avg))
+    tbl.add_row("Min Score", str(min_))
+    tbl.add_row("Max Score", str(max_))
+
+    console.print(tbl)
     time.sleep(0.65)
 
 
@@ -246,15 +249,15 @@ def main():
     else:
         if proxylist:
             if not os.path.exists(proxylist):
-                print("Invalid path to proxy list")
+                console.print(Panel("[red]Invalid path to proxy list[/red]", border_style="green"))
                 exit()
 
-            print(f"<<< Writing proxies to the database >>>")
+            console.print(Panel("[green]<<< Writing proxies to the database >>>[/green]", border_style="green"))
             time.sleep(0.65)
 
             total_written = ProxyManager().write2db(proxylist)
 
-            print(f"Proxies written to the database: {total_written}")
+            console.print(Panel(f"[green]Proxies written to the database: {total_written}[/green]", border_style="green"))
             time.sleep(0.65)
 
         total_proxies = len(database.Proxy().get_proxies())
@@ -262,22 +265,20 @@ def main():
         if username and passlist and total_proxies:
 
             if not os.path.exists(passlist):
-                print("Invalid path to password list")
+                console.print(Panel("[red]Invalid path to password list[/red]", border_style="green"))
                 exit()
 
-            Engine(
-                username, modes[mode], passlist, not arguments.color
-            ).start()
+            Engine(username, modes[mode], passlist, not arguments.color).start()
 
         else:
             if not proxylist or total_proxies == 0:
-                print("No proxies in the database and no proxy list provided")
+                console.print(Panel("[red]No proxies in the database and no proxy list provided[/red]", border_style="green"))
 
 
 if __name__ == "__main__":
 
     if int(python_version()[0]) < 3:
-        print("[!] Please use Python 3")
+        console.print(Panel("[red][!] Please use Python 3[/red]", border_style="green"))
         exit()
 
     main()
